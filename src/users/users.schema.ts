@@ -6,18 +6,24 @@ export type UserDocument = HydratedDocument<User>
 @Schema()
 export class User {
     @Prop({required: true})
-    name: string
+    first_name: string
 
     @Prop({required: true})
-    parent_id: string
+    last_name: string
+
+    @Prop({required: true, unique: true})
+    email: string
 
     @Prop({required: true})
-    createdTime: string
+    password: string
 
-    @Prop()
+    @Prop({required: true, default: 'admin'})
+    role: 'admin' | 'user'
+
+    @Prop({default: new Date()})
     createdAt: Date
 
-    @Prop()
+    @Prop({default: new Date()})
     updatedAt: Date
 }
 

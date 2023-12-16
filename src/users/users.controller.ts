@@ -1,10 +1,9 @@
-import { Controller, Get, Post, Body } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req } from "@nestjs/common";
 import { UsersServices } from "./users.service";
 import { User } from "./users.schema";
+import { IError, IReturn } from "shared/types";
 
-interface ReturnInterface {
-    status: number
-    message: string
+interface ReturnInterface extends IReturn {
     user: User
 }
 
@@ -18,7 +17,8 @@ export class UsersController {
     }
 
     @Post()
-    async save(req, res): Promise<ReturnInterface> {
+    async save(@Req() req, res): Promise<ReturnInterface | IError> {
+        console.log('req', req.hostname, req.body)
         return await this.userServices.create(req.body)
     }
 }
