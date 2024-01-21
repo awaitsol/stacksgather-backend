@@ -2,6 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './category.schema';
 import { Model } from 'mongoose';
+import { IReturn } from 'shared/types';
+
+interface ReturnInterface extends IReturn {
+    category: Category,
+    token?: string
+}
 
 @Injectable()
 export class CategoriesService {
@@ -9,5 +15,15 @@ export class CategoriesService {
 
     async findAll(): Promise<Category[]> {
         return await this.categoryModel.find().exec()
+    }
+
+    async save(category: Category): Promise<ReturnInterface> {
+        let new_category = new this.categoryModel(category)
+        new_category.save()
+        return {
+            status: 200,
+            message: 'category saved successfully.',
+            category: new_category
+        }
     }
 }
