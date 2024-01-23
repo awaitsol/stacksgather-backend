@@ -26,4 +26,12 @@ export class CategoriesService {
             category: new_category
         }
     }
+
+    async delete(id: string) {
+        await this.categoryModel.findOneAndDelete({_id: id})
+        return {
+            status: 200,
+            message: 'category deleted successfully'
+        }
+    }
 }
