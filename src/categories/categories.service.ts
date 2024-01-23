@@ -17,6 +17,11 @@ export class CategoriesService {
         return await this.categoryModel.find().exec()
     }
 
+    async findMain(id: string): Promise<Category[]> {
+        let query = id ? { parent_id: id} : {$or: [{ parent_id : { $exists: false } }, { parent_id: "" } ]}
+        return await this.categoryModel.find(query).exec()
+    }
+
     async save(category: Category): Promise<ReturnInterface> {
         let new_category = new this.categoryModel(category)
         new_category.save()
@@ -24,6 +29,14 @@ export class CategoriesService {
             status: 200,
             message: 'category saved successfully.',
             category: new_category
+        }
+    }
+
+    async update(category: Category, id: string): Promise<IReturn> {
+        let new_category = await this.categoryModel.updateOne({_id: id}, category).exec()
+        return {
+            status: 200,
+            message: 'category updated successfully.',
         }
     }
 

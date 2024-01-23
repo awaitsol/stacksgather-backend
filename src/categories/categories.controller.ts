@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Post, Req } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Put, Req } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { Category } from './category.schema';
 import { IReturn } from 'shared/types';
@@ -17,10 +17,22 @@ export class CategoriesController {
     return this.categoriesService.findAll()
   }
 
+  @Post('by-parent-id')
+  async findMainCategories(@Req() req, res): Promise<Category[]> {
+    let { body } = req
+    return this.categoriesService.findMain(body.parent_id)
+  }
+
   @Post()
   async save(@Req() req, res): Promise<ReturnInterface> {
     let { body } = req
     return this.categoriesService.save(body)
+  }
+
+  @Put()
+  async update(@Req() req, res): Promise<IReturn> {
+    let { body } = req
+    return this.categoriesService.update(body, body._id)
   }
 
   @Delete()
