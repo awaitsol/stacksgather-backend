@@ -15,7 +15,8 @@ import { AuthService } from "shared/services/auth-service";
         ])
     ],
     controllers: [UsersController],
-    providers: [UsersServices, AuthService]
+    providers: [UsersServices, AuthService],
+    exports: [UsersServices]
 })
 
 export class UsersModule {}

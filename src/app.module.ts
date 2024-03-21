@@ -7,8 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { LoginModule } from './login/login.module';
 import { CategoriesModule } from './categories/categories.module';
 import { FilesModule } from './files/files.module';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
+import { ArticlesModule } from './articles/articles.module';
+import { TagsModule } from './tags/tags.module';
 
 @Module({
   imports: [
@@ -20,7 +20,9 @@ import { join } from 'path';
     UsersModule,
     LoginModule,
     CategoriesModule,
-    FilesModule
+    TagsModule,
+    FilesModule,
+    ArticlesModule
   ],
   controllers: [AppController],
   providers: [AppService],

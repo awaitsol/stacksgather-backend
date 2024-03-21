@@ -1,4 +1,4 @@
-import { Controller, Post, Req } from '@nestjs/common';
+import { Controller, Get, Post, Req } from '@nestjs/common';
 import { LoginService } from './login.service';
 
 @Controller('login')
@@ -8,5 +8,10 @@ export class LoginController {
     @Post()
     async login (@Req() req, res) {
         return this.loginService.login(req.body)
+    }
+
+    @Post('verify')
+    async verify (@Req() req) {
+        return this.loginService.verify(req.body)
     }
 }

@@ -12,10 +12,16 @@ export class Article {
     title: string
 
     @Prop()
-    image: string
+    description: string
 
     @Prop()
-    parent_id: string
+    categories: string[]
+
+    @Prop()
+    tags: string[]
+
+    @Prop()
+    slug: string
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article)

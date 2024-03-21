@@ -17,6 +17,12 @@ export class CategoriesController {
     return this.categoriesService.findAll()
   }
 
+  @Post('get-category')
+  async getCategory(@Req() req, res): Promise<Category> {
+    let {body} = req
+    return this.categoriesService.find(body)
+  }
+
   @Post('by-parent-id')
   async findMainCategories(@Req() req, res): Promise<Category[]> {
     let { body } = req

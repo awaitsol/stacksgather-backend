@@ -10,6 +10,19 @@ export class AuthService {
     }
 
     async auth_verification(token: string) {
-        return await verify(token, SECRET_KEY)
+        try {
+            const res = await verify(token, process.env.SECRET_KEY)
+            return {
+                status: 200,
+                message: "verified",
+                user: res
+            }
+        }
+        catch (e) {
+            return {
+                status: e.name,
+                message: e.message
+            }
+        }
     }
 }

@@ -5,7 +5,7 @@ import { Model } from 'mongoose';
 import { IReturn } from 'shared/types';
 
 interface ReturnInterface extends IReturn {
-    category: Article,
+    article: Article,
     token?: string
 }
 
@@ -17,30 +17,31 @@ export class ArticlesService {
         return await this.articleModel.find().exec()
     }
 
-    async upload_file(body) {
-        console.log('body', body)
+    async findOne(slug: string): Promise<Article> {
+        return await this.articleModel.findOne({slug: slug}).exec()
     }
 
-    async findMain(id: string): Promise<Article[]> {
-        let query = id ? { parent_id: id} : {$or: [{ parent_id : { $exists: false } }, { parent_id: "" } ]}
-        return await this.articleModel.find(query).exec()
+    async findSimilar(title: string): Promise<Article[]> {
+        return await this.articleModel.find({title: { $regex: new RegExp(title, 'i')}}).exec()
     }
 
     async save(article: Article): Promise<ReturnInterface> {
-        let new_category = new this.articleModel(article)
-        new_category.save()
+        const slug = article.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
+        const new_article = new this.articleModel({...article, slug: slug})
+        new_article.save()
         return {
             status: 200,
-            message: 'category saved successfully.',
-            category: new_category
+            message: 'article saved successfully.',
+            article: new_article
         }
     }
 
     async update(article: Article, id: string): Promise<IReturn> {
-        let new_category = await this.articleModel.updateOne({_id: id}, article).exec()
+        const slug = article.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
+        await this.articleModel.updateOne({_id: id}, {...article, slug: slug}).exec()
         return {
             status: 200,
-            message: 'category updated successfully.',
+            message: 'article updated successfully.',
         }
     }
 
@@ -48,7 +49,18 @@ export class ArticlesService {
         await this.articleModel.findOneAndDelete({_id: id})
         return {
             status: 200,
-            message: 'category deleted successfully'
+            message: 'article deleted successfully'
+        }
+    }
+
+    async getMultipleArticleByFieldIds(field, ids: string[]) {
+        const articles = await this.articleModel.find({
+            [field]: {
+            $in: ids
+        }}).exec()
+        return {
+            status: 200,
+            artiicles: articles
         }
     }
 }

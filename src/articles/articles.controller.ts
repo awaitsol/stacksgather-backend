@@ -1,10 +1,10 @@
-import { Controller, Delete, Get, Post, Put, Req } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Put, Req } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { Article } from './article.schema';
 import { IReturn } from 'shared/types';
 
 interface ReturnInterface extends IReturn {
-  category: Article,
+  article: Article,
   token?: string
 }
 
@@ -17,15 +17,14 @@ export class ArticlesController {
     return this.articleService.findAll()
   }
 
-  @Post('upload-file')
-  async upload_file(@Req() req, res) {
-    return this.articleService
+  @Get(':slug')
+  async findOne(@Param('slug') slug): Promise<Article> {
+    return this.articleService.findOne(slug)
   }
 
-  @Post('by-parent-id')
-  async findMainCategories(@Req() req, res): Promise<Article[]> {
-    let { body } = req
-    return this.articleService.findMain(body.parent_id)
+  @Get('/similar/:title')
+  async findSimilar(@Param('title') title): Promise<Article[]> {
+    return this.articleService.findSimilar(title)
   }
 
   @Post()
@@ -40,9 +39,20 @@ export class ArticlesController {
     return this.articleService.update(body, body._id)
   }
 
-  @Delete()
-  async delete(@Req() req, res) {
+  @Delete(':id')
+  async delete(@Param('id') id, @Req() req) {
+    return this.articleService.delete(id)
+  }
+
+  @Post('/articles-by-tag-ids')
+  async getMultipleArticleByTagIds(@Req() req) {
     let { body } = req
-    return this.articleService.delete(body.id)
+    return this.articleService.getMultipleArticleByFieldIds('tags', body._ids)
+  }
+
+  @Post('/articles-by-category-ids')
+  async getMultipleArticleByCategoryIds(@Req() req) {
+    let { body } = req
+    return this.articleService.getMultipleArticleByFieldIds('categories', body._ids)
   }
 }

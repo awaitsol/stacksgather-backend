@@ -51,4 +51,12 @@ export class LoginService {
             }
         }
     }
+
+    async verify (body) {
+        const { token } = body
+        let verified_user: any = await this.auth_service.auth_verification(token)
+        const user = await this.userModel.findOne({email: verified_user.user.email})
+        verified_user.user = user
+        return verified_user
+    }
 }

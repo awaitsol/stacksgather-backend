@@ -13,6 +13,9 @@ export class Files {
 
     @Prop()
     size: Number
+
+    @Prop()
+    destination: string
 }
 
 export const FilesSchema = SchemaFactory.createForClass(Files)

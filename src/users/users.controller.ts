@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from "@nestjs/common";
+import { Body, Controller, Get, Post, Put, Req } from "@nestjs/common";
 import { UsersServices } from "./users.service";
 import { User } from "./users.schema";
 import { IError, IReturn } from "shared/types";
@@ -18,7 +18,16 @@ export class UsersController {
 
     @Post()
     async save(@Req() req, res): Promise<ReturnInterface | IError> {
-        console.log('req', req.hostname, req.body)
         return await this.userServices.create(req.body)
+    }
+
+    @Put()
+    async update(@Req() req, res): Promise<IReturn | IError> {
+        return await this.userServices.update(req.body.user, req.body.id)
+    }
+
+    @Post('/change-password')
+    async changePassword(@Req() req) {
+        return await this.userServices.changePassword(req.body)
     }
 }

@@ -16,6 +16,9 @@ export class Category {
 
     @Prop()
     parent_id: string
+
+    @Prop()
+    slug: string
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category)

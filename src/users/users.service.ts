@@ -48,4 +48,43 @@ export class UsersServices {
             throw new HttpException('server error found: ' + _er, HttpStatus.BAD_REQUEST)
         }
     }
+
+    async update(user: any, id: string) {
+        await this.userModel.updateOne({_id: id}, user).exec()
+        return {
+            status: 200,
+            message: 'user updated successfully.',
+        }
+    }
+
+    async changePassword(data) {
+        const { token, password, new_password } = data
+        let verified_user: any = await this.auth_service.auth_verification(token)
+
+        if(verified_user.status !== 200)
+        {
+            return {
+                status: 401,
+                message: verified_user.message
+            }
+        }
+
+        const user = await this.userModel.findOne({email: verified_user.user.email})
+        let checkpass = await bcrypt.compare(password, user.password)
+        if(checkpass)
+        {
+            let new_password_hash = await bcrypt.hash(new_password, 12)
+            this.userModel.updateOne({email: verified_user.user.email}, {password: new_password_hash})
+            return {
+                status: 200,
+                message: 'Password changed successfully.'
+            }
+        }
+        else {
+            return {
+                status: 200,
+                message: 'Current password is in-valid.'
+            }
+        }
+    }
 }
