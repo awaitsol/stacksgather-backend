@@ -16,7 +16,9 @@ import { TagsModule } from './tags/tags.module';
       envFilePath: ".env",
       isGlobal: true
     }),
-    MongooseModule.forRoot(process.env.DB_URL),
+    MongooseModule.forRoot(process.env.DB_URL, {
+      dbName: 'blogs'
+    }),
     UsersModule,
     LoginModule,
     CategoriesModule,
