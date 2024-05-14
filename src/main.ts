@@ -10,7 +10,9 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'assets'));
   app.use(bodyParser.json({limit: '50mb'}));
   app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-  app.enableCors();
+  app.enableCors({
+    origin: [process.env.FRONT_END_DOMAIN]
+  });
   await app.listen(process.env.PORT);
 }
 bootstrap();
