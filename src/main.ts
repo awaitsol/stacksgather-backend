@@ -11,7 +11,7 @@ async function bootstrap() {
   app.use(bodyParser.json({limit: '50mb'}));
   app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
   app.enableCors({
-    origin: [process.env.FRONT_END_DOMAIN]
+    origin: process.env.FRONT_END_DOMAINS.split(',')
   });
   await app.listen(process.env.PORT);
 }
