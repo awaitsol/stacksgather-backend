@@ -22,6 +22,9 @@ export class Article {
 
     @Prop()
     slug: string
+
+    @Prop()
+    meta_description: string
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article)
