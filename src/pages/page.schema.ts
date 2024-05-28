@@ -1,28 +1,24 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 
-export type ArticleDocument = HydratedDocument<Article>
+export type PageDocument = HydratedDocument<Page>
 
 @Schema({
     timestamps: true
 })
 
-export class Article {
+export class Page {
     @Prop()
     title: string
 
     @Prop()
-    thumbnail: string
-    default: null
+    banner_image: string
+
+    @Prop()
+    short_description: string
 
     @Prop()
     description: string
-
-    @Prop()
-    categories: string[]
-
-    @Prop()
-    tags: string[]
 
     @Prop()
     slug: string
@@ -31,4 +27,4 @@ export class Article {
     meta_description: string
 }
 
-export const ArticleSchema = SchemaFactory.createForClass(Article)
+export const PageSchema = SchemaFactory.createForClass(Page)

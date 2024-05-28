@@ -9,6 +9,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { FilesModule } from './files/files.module';
 import { ArticlesModule } from './articles/articles.module';
 import { TagsModule } from './tags/tags.module';
+import { PagesModule } from './pages/page.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { TagsModule } from './tags/tags.module';
     CategoriesModule,
     TagsModule,
     FilesModule,
-    ArticlesModule
+    ArticlesModule,
+    PagesModule
   ],
   controllers: [AppController],
   providers: [AppService],
