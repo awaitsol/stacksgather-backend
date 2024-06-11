@@ -12,6 +12,9 @@ export class Category {
     title: string
 
     @Prop()
+    thumbnail: string
+
+    @Prop()
     image: string
 
     @Prop()

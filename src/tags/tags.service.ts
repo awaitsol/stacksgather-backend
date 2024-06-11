@@ -54,6 +54,7 @@ export class TagsService {
         const tags = await this.tagModel.find({_id: {
             $in: ids
         }}).exec()
+
         return {
             status: 200,
             tags: tags

@@ -40,7 +40,7 @@ export class CategoriesService {
 
     async update(category: Category, id: string): Promise<ReturnInterface> {
         const slug = category.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
-        const _category = await this.categoryModel.findOneAndUpdate({_id: id}, {title: category.title, parent_id: category.parent_id, slug: slug}, {returnDocument: "after"})
+        const _category = await this.categoryModel.findOneAndUpdate({_id: id}, {thumbnail: category.thumbnail, title: category.title, parent_id: category.parent_id, slug: slug}, {returnDocument: "after"})
         return {
             status: 200,
             message: 'category updated successfully.',
