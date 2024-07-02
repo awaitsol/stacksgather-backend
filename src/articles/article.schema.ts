@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, Schema as MongooseSchema } from "mongoose";
+import { Category } from "src/categories/category.schema";
+import { Tag } from "src/tags/tag.schema";
 
 export type ArticleDocument = HydratedDocument<Article>
 
@@ -18,11 +20,22 @@ export class Article {
     @Prop()
     description: string
 
-    @Prop()
-    categories: string[]
+    @Prop({
+        type: [{
+            type: MongooseSchema.Types.ObjectId,
+            ref: 'Category'
+        }]
+    })
+    categories: Category[]
 
-    @Prop()
-    tags: string[]
+    @Prop({
+        type: [{
+            type: MongooseSchema.Types.ObjectId,
+            ref: 'Tag'
+        }]
+    })
+    tags: Tag[]
+    
 
     @Prop()
     slug: string

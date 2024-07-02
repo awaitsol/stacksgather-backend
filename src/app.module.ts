@@ -10,6 +10,7 @@ import { FilesModule } from './files/files.module';
 import { ArticlesModule } from './articles/articles.module';
 import { TagsModule } from './tags/tags.module';
 import { PagesModule } from './pages/page.module';
+import { HomeModule } from './home/home.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { PagesModule } from './pages/page.module';
     TagsModule,
     FilesModule,
     ArticlesModule,
-    PagesModule
+    PagesModule,
+    HomeModule
   ],
   controllers: [AppController],
   providers: [AppService],

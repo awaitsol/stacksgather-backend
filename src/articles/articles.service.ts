@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Article } from './article.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { IReturn } from 'shared/types';
 
 interface ReturnInterface extends IReturn {
@@ -15,6 +15,13 @@ export class ArticlesService {
 
     async findAll(): Promise<Article[]> {
         return await this.articleModel.find().exec()
+    }
+
+    async findAllWithTags(): Promise<Article[]> {
+        return await this.articleModel.find().exec()
+        // return await this.articleModel.aggregate({
+
+        // });
     }
 
     async findOne(slug: string): Promise<Article> {
@@ -38,6 +45,7 @@ export class ArticlesService {
 
     async update(article: Article, id: string): Promise<IReturn> {
         const slug = article.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
+        // const tags = article.tags.map(tag => tag)
         await this.articleModel.updateOne({_id: id}, {...article, slug: slug}).exec()
         return {
             status: 200,
@@ -54,13 +62,30 @@ export class ArticlesService {
     }
 
     async getMultipleArticleByFieldIds(field, ids: string[]) {
-        const articles = await this.articleModel.find({
-            [field]: {
-            $in: ids
-        }}).exec()
+
+        const idsArray = ids.map(id => new Types.ObjectId(id))
+
+        const articles = await this.articleModel.aggregate([
+            {
+                $match: {
+                    [field]: {
+                        $in: idsArray
+                    }
+                }
+            },
+            {
+                $lookup: {
+                    from: "tags",
+                    localField: "tags",
+                    foreignField: "_id",
+                    as: "tag_info"
+                }
+            }
+        ])
+
         return {
             status: 200,
-            artiicles: articles
+            articles: articles
         }
     }
 }
