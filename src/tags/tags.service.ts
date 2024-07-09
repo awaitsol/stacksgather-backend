@@ -14,7 +14,9 @@ export class TagsService {
     constructor(@InjectModel(Tag.name) private tagModel: Model<Tag>){}
 
     async findAll(): Promise<Tag[]> {
-        return await this.tagModel.find().exec()
+        return await this.tagModel.aggregate([{
+            $sort: { _id: -1 }
+        }])
     }
 
     async find(body): Promise<Tag> {

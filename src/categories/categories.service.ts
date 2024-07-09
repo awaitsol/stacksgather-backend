@@ -14,7 +14,9 @@ export class CategoriesService {
     constructor(@InjectModel(Category.name) private categoryModel: Model<Category>){}
 
     async findAll(): Promise<Category[]> {
-        return await this.categoryModel.find().exec()
+        return await this.categoryModel.aggregate([{
+            $sort: { _id: -1 }
+        }])
     }
 
     async find(filter): Promise<Category> {
@@ -23,7 +25,16 @@ export class CategoriesService {
 
     async findMain(id: string): Promise<Category[]> {
         let query = id ? { parent_id: id} : {$or: [{ parent_id : { $exists: false } }, { parent_id: "" } ]}
-        return await this.categoryModel.find(query).exec()
+        return await this.categoryModel.aggregate([
+            {
+                $match: query
+            },
+            {
+                $sort: {
+                    _id: -1
+                }
+            }
+        ])
     }
 
     async save(category: Category): Promise<ReturnInterface> {

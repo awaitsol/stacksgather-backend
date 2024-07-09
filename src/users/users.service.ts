@@ -26,6 +26,7 @@ export class UsersServices {
             if(checkuser)
             {
                 return {
+                    status: 401,
                     error: {
                         message: 'email already exist'
                     }
