@@ -21,6 +21,9 @@ export class HomeService {
                     foreignField: "_id",
                     as: "tag_info"
                 }
+            },
+            {
+                $sort: { _id: -1 }
             }
         ])
 
@@ -38,6 +41,9 @@ export class HomeService {
                     foreignField: "_id",
                     as: "tag_info"
                 }
+            },
+            {
+                $sort: { _id: -1 }
             }
         ])
     
@@ -55,6 +61,9 @@ export class HomeService {
                         $in: [tag._id]
                     }
                 }
+            },
+            {
+                $sort: { _id: -1 }
             }
         ])
     
