@@ -20,4 +20,9 @@ export class HomeController {
         return await this.homeServices.getTag(id)
     }
 
+    @Get('store')
+    async store() {
+        return await this.homeServices.store()
+    }
+
 }

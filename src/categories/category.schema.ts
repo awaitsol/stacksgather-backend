@@ -15,10 +15,7 @@ export class Category {
     thumbnail: string
 
     @Prop()
-    image: string
-
-    @Prop()
-    parent_id: string
+    parent_id: number
 
     @Prop()
     slug: string

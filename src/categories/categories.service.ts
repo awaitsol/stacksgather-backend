@@ -1,47 +1,58 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './category.schema';
-import { Model } from 'mongoose';
 import { IReturn } from 'shared/types';
+import { PrismaService } from 'prisma/primsa.service';
 
 interface ReturnInterface extends IReturn {
-    category: Category,
+    category: any,
     token?: string
 }
 
 @Injectable()
 export class CategoriesService {
-    constructor(@InjectModel(Category.name) private categoryModel: Model<Category>){}
+    constructor(
+        private prisma: PrismaService
+    ){}
 
     async findAll(): Promise<Category[]> {
-        return await this.categoryModel.aggregate([{
-            $sort: { _id: -1 }
-        }])
+        return await this.prisma.category.findMany({
+            orderBy: {
+                id: "desc"
+            }
+        })
     }
 
     async find(filter): Promise<Category> {
-        return await this.categoryModel.findOne(filter)
-    }
-
-    async findMain(id: string): Promise<Category[]> {
-        let query = id ? { parent_id: id} : {$or: [{ parent_id : { $exists: false } }, { parent_id: "" } ]}
-        return await this.categoryModel.aggregate([
-            {
-                $match: query
-            },
-            {
-                $sort: {
-                    _id: -1
+        return await this.prisma.category.findFirst({
+            where: filter,
+            include: {
+                articles: {
+                    select: {
+                        article: true
+                    }
                 }
             }
-        ])
+        })
+    }
+
+    async findMain(id: number): Promise<Category[]> {
+        return await this.prisma.category.findMany({
+            where: id ? { parent_id: Number(id) } : {},
+            orderBy: {
+                id: "desc"
+            }
+        })
     }
 
     async save(category: Category): Promise<ReturnInterface> {
         const slug = category.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
 
-        let new_category = new this.categoryModel({...category, slug: slug})
-        new_category.save()
+        let new_category = await this.prisma.category.create({
+            data: {
+                ...category, slug: slug
+            }
+        })
+
         return {
             status: 200,
             message: 'category saved successfully.',
@@ -49,9 +60,13 @@ export class CategoriesService {
         }
     }
 
-    async update(category: Category, id: string): Promise<ReturnInterface> {
+    async update(category: Category, id: number): Promise<ReturnInterface> {
         const slug = category.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
-        const _category = await this.categoryModel.findOneAndUpdate({_id: id}, {thumbnail: category.thumbnail, title: category.title, parent_id: category.parent_id, slug: slug}, {returnDocument: "after"})
+        const _category = await this.prisma.category.update({
+            where: { id: id },
+            data: { thumbnail: category.thumbnail, title: category.title, parent_id: category.parent_id as number, slug: slug }
+        })
+
         return {
             status: 200,
             message: 'category updated successfully.',
@@ -59,8 +74,11 @@ export class CategoriesService {
         }
     }
 
-    async delete(id: string) {
-        await this.categoryModel.findOneAndDelete({_id: id})
+    async delete(id: number) {
+        await this.prisma.category.delete({
+            where: {id: id}
+        })
+        
         return {
             status: 200,
             message: 'category deleted successfully'

@@ -1,32 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Tag } from './tag.schema';
-import { Model } from 'mongoose';
 import { IReturn } from 'shared/types';
+import { PrismaService } from 'prisma/primsa.service';
 
 interface ReturnInterface extends IReturn {
-    tag: Tag,
+    tag: any,
     token?: string
 }
 
 @Injectable()
 export class TagsService {
-    constructor(@InjectModel(Tag.name) private tagModel: Model<Tag>){}
+    constructor(
+        private prisma: PrismaService
+    ){}
 
-    async findAll(): Promise<Tag[]> {
-        return await this.tagModel.aggregate([{
-            $sort: { _id: -1 }
-        }])
+    async findAll(): Promise<any[]> {
+        return await this.prisma.tag.findMany({
+            orderBy: {
+                id: "desc"
+            }
+        })
     }
 
-    async find(body): Promise<Tag> {
-        return await this.tagModel.findOne(body)
+    async find(body): Promise<any> {
+        return await this.prisma.tag.findFirst({where: body})
     }
 
-    async save(tag: Tag): Promise<ReturnInterface> {
+    async save(tag: any): Promise<ReturnInterface> {
         const slug = tag.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
-        let new_tag = new this.tagModel({...tag, slug: slug})
-        new_tag.save()
+
+        let new_tag = await this.prisma.tag.create({
+            data: {
+                ...tag, slug: slug
+            }
+        })
+
         return {
             status: 200,
             message: 'tag saved successfully.',
@@ -34,9 +41,15 @@ export class TagsService {
         }
     }
 
-    async update(tag: Tag, id: string): Promise<ReturnInterface> {
+    async update(tag: any, id: number): Promise<ReturnInterface> {
         const slug = tag.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
-        const _tag = await this.tagModel.findOneAndUpdate({_id: id}, {title: tag.title, slug: slug}, {returnDocument: "after"})
+        const _tag = await this.prisma.tag.update({
+            where: {
+                id: id
+            },
+            data: {title: tag.title, slug: slug}
+        })
+
         return {
             status: 200,
             message: 'tag updated successfully.',
@@ -44,18 +57,24 @@ export class TagsService {
         }
     }
 
-    async delete(id: string) {
-        await this.tagModel.findOneAndDelete({_id: id})
+    async delete(id: number) {
+        
+        await this.prisma.tag.delete({
+            where: { id: id }
+        })
+
         return {
             status: 200,
             message: 'tag deleted successfully'
         }
     }
 
-    async getMultipleTagsById(ids: string[]) {
-        const tags = await this.tagModel.find({_id: {
-            $in: ids
-        }}).exec()
+    async getMultipleTagsById(ids: number[]) {
+        const tags = await this.prisma.tag.findMany({
+            where: {
+                id: { in: ids }
+            }
+        })
 
         return {
             status: 200,

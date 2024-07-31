@@ -3,10 +3,14 @@ import { Files } from "./file.schema";
 import { Model } from "mongoose";
 import { User } from "src/users/users.schema";
 import { UsersServices } from "src/users/users.service";
+import { PrismaService } from "prisma/primsa.service";
 
 export class FilesService {
 
-    constructor(@InjectModel(Files.name) private fileModel:Model<Files>) {}
+    constructor(
+        @InjectModel(Files.name) private fileModel:Model<Files>,
+        private prisma: PrismaService
+    ) {}
 
     async uploadFile(file) {
 
@@ -18,9 +22,11 @@ export class FilesService {
             destination: file.destination
         }
         
-        const new_file = new this.fileModel(new_file_data)
+        const new_file = await this.prisma.file.create({
+            data: new_file_data
+        })
 
-        return await new_file.save()
+        return await new_file
     }
 
     async updateUserProfile(user_id, file_id) {

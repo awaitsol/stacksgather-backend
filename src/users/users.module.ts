@@ -4,6 +4,7 @@ import { UsersServices } from "./users.service";
 import { MongooseModule } from "@nestjs/mongoose"
 import { UserSchema } from "./users.schema";
 import { AuthService } from "shared/services/auth-service";
+import { PrismaService } from "prisma/primsa.service";
 
 @Module({
     imports: [
@@ -15,7 +16,7 @@ import { AuthService } from "shared/services/auth-service";
         ])
     ],
     controllers: [UsersController],
-    providers: [UsersServices, AuthService],
+    providers: [UsersServices, AuthService, PrismaService],
     exports: [UsersServices]
 })
 

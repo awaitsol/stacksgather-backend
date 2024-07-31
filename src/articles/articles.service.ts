@@ -3,41 +3,67 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Article } from './article.schema';
 import { Model, Types } from 'mongoose';
 import { IReturn } from 'shared/types';
+import { PrismaService } from 'prisma/primsa.service';
 
 interface ReturnInterface extends IReturn {
-    article: Article,
+    article: any,
     token?: string
 }
 
 @Injectable()
 export class ArticlesService {
-    constructor(@InjectModel(Article.name) private articleModel: Model<Article>){}
+    constructor(
+        @InjectModel(Article.name) private articleModel: Model<Article>,
+        private prisma: PrismaService
+    ){}
 
-    async findAll(): Promise<Article[]> {
-        return await this.articleModel.aggregate([{
-            $sort: { _id: -1 }
-        }])
+    async findAll(): Promise<any[]> {
+        return await this.prisma.article.findMany({
+            orderBy: { id: "desc" }
+        })
     }
 
-    async findAllWithTags(): Promise<Article[]> {
-        return await this.articleModel.find().exec()
-        // return await this.articleModel.aggregate({
-
-        // });
+    async findAllWithTags(): Promise<any[]> {
+        return await this.prisma.article.findMany({
+            include: {
+                tags: {
+                    select: {
+                        tag: true
+                    }
+                }
+            }
+        })
     }
 
-    async findOne(slug: string): Promise<Article> {
-        return await this.articleModel.findOne({slug: slug}).exec()
+    async findOne(slug: string): Promise<any> {
+        return await this.prisma.article.findFirst({
+            where: {slug: slug},
+            include: {
+                categories: {
+                    select: {
+                        category: true
+                    }
+                },
+                tags: {
+                    select: {
+                        tag: true
+                    }
+                }
+            }
+        })
     }
 
-    async findSimilar(title: string): Promise<Article[]> {
-        return await this.articleModel.find({title: { $regex: new RegExp(title, 'i')}}).exec()
+    async findSimilar(title: string): Promise<any[]> {
+        return await this.prisma.article.findMany({
+            where: { title: { contains: title} }
+        })
     }
 
-    async save(article: Article): Promise<ReturnInterface> {
+    async save(article: any): Promise<ReturnInterface> {
         const slug = article.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
-        const new_article = new this.articleModel({...article, slug: slug})
-        new_article.save()
+        const new_article = await this.prisma.article.create({
+            data: {...article, slug: slug}
+        })
         return {
             status: 200,
             message: 'article saved successfully.',
@@ -45,49 +71,69 @@ export class ArticlesService {
         }
     }
 
-    async update(article: Article, id: string): Promise<IReturn> {
+    async update(article: any, id: number): Promise<IReturn> {
         const slug = article.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
-        // const tags = article.tags.map(tag => tag)
-        await this.articleModel.updateOne({_id: id}, {...article, slug: slug}).exec()
+        await this.prisma.article.update({
+            where: {id: id}, data: {...article, slug: slug}
+        })
+
         return {
             status: 200,
             message: 'article updated successfully.',
         }
     }
 
-    async delete(id: string) {
-        await this.articleModel.findOneAndDelete({_id: id})
+    async delete(id: number) {
+        await this.prisma.article.delete({where: {id: id}})
         return {
             status: 200,
             message: 'article deleted successfully'
         }
     }
 
-    async getMultipleArticleByFieldIds(field, ids: string[]) {
+    async getMultipleArticleByFieldIds(ids: number[]) {
 
-        const idsArray = ids.map(id => new Types.ObjectId(id))
-
-        const articles = await this.articleModel.aggregate([
-            {
-                $match: {
-                    [field]: {
-                        $in: idsArray
-                    }
+        const articles = await this.prisma.category.findMany({
+            where: {
+                id: {
+                    in: ids
                 }
             },
-            {
-                $lookup: {
-                    from: "tags",
-                    localField: "tags",
-                    foreignField: "_id",
-                    as: "tag_info"
+            include: {
+                articles: {
+                    select: {
+                        article: true
+                    }
                 }
             }
-        ])
+        })
 
         return {
             status: 200,
             articles: articles
+        }
+    }
+
+    async getMultipleArticleByTagIds(ids: number[]) {
+
+        const articlesByTag = await this.prisma.tag.findMany({
+            where: {
+                id: {
+                    in: ids
+                }
+            },
+            include: {
+                articles: {
+                    select: {
+                        article: true
+                    }
+                }
+            }
+        })
+
+        return {
+            status: 200,
+            articles: articlesByTag
         }
     }
 }

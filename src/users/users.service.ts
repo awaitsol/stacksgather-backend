@@ -1,28 +1,29 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common"
-import { InjectModel } from "@nestjs/mongoose"
-import { User, UserDocument } from "./users.schema"
-import { Model } from "mongoose"
 import * as bcrypt from "bcrypt"
 import { IError, IReturn } from "shared/types"
 import { AuthService } from "shared/services/auth-service"
+import { PrismaService } from "prisma/primsa.service"
 
 interface ReturnInterface extends IReturn {
-    user: User,
+    user: any,
     token?: string
 }
 
 @Injectable()
 export class UsersServices {
-    constructor(@InjectModel(User.name) private userModel: Model<User>, private auth_service: AuthService) {}
+    constructor(
+        private auth_service: AuthService,
+        private prisma: PrismaService
+    ) {}
 
-    async all(): Promise<User[]> {
-        let users = await this.userModel.find().exec()
+    async all(): Promise<any[]> {
+        let users = await this.prisma.user.findMany()
         return users
     }
 
-    async create(user: User): Promise<ReturnInterface | IError> {
+    async create(user: any): Promise<ReturnInterface | IError> {
         try{
-            let checkuser = await this.userModel.findOne({email: user.email}).exec()
+            let checkuser = await this.prisma.user.findFirst({where: {email: user.email}})
             if(checkuser)
             {
                 return {
@@ -34,8 +35,17 @@ export class UsersServices {
             }
                 
             user.password = await bcrypt.hash(user.password, 12)
-            const userData = new this.userModel(user)
-            let _user = await userData.save()
+            const _user = await this.prisma.user.create({
+                data: {
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    email: user.email,
+                    password: user.password,
+                    profile: user.profile,
+                    role: "USER"
+                }
+            })
+
             let token = await this.auth_service.auth_sign(_user)
             return {
                 status: 200,
@@ -50,8 +60,13 @@ export class UsersServices {
         }
     }
 
-    async update(user: any, id: string) {
-        await this.userModel.updateOne({_id: id}, user).exec()
+    async update(user: any, id: number) {
+        await this.prisma.user.update({
+            where: {
+                id: id
+            }, 
+            data: user
+        })
         return {
             status: 200,
             message: 'user updated successfully.',
@@ -70,12 +85,19 @@ export class UsersServices {
             }
         }
 
-        const user = await this.userModel.findOne({email: verified_user.user.email})
+        const user = await this.prisma.user.findFirst({
+            where: { email: verified_user.user.email }
+        })
+
         let checkpass = await bcrypt.compare(password, user.password)
         if(checkpass)
         {
             let new_password_hash = await bcrypt.hash(new_password, 12)
-            this.userModel.updateOne({email: verified_user.user.email}, {password: new_password_hash})
+
+            this.prisma.user.update({
+                where: {email: verified_user.user.email},
+                data: {password: new_password_hash}
+            })
             return {
                 status: 200,
                 message: 'Password changed successfully.'

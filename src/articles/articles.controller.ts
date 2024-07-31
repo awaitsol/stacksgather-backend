@@ -47,12 +47,12 @@ export class ArticlesController {
   @Post('/articles-by-tag-ids')
   async getMultipleArticleByTagIds(@Req() req) {
     let { body } = req
-    return this.articleService.getMultipleArticleByFieldIds('tags', body._ids)
+    return this.articleService.getMultipleArticleByTagIds(body._ids)
   }
 
   @Post('/articles-by-category-ids')
   async getMultipleArticleByCategoryIds(@Req() req) {
     let { body } = req
-    return this.articleService.getMultipleArticleByFieldIds('categories', body._ids)
+    return this.articleService.getMultipleArticleByFieldIds(body._ids)
   }
 }

@@ -1,14 +1,14 @@
-import { Injectable, Req } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { lookupService } from 'dns';
-import { Model } from 'mongoose';
+import { Injectable } from '@nestjs/common';
 import { AuthService } from 'shared/services/auth-service';
-import { User } from 'src/users/users.schema';
 import * as bcrypt from "bcrypt"
+import { PrismaService } from 'prisma/primsa.service';
 
 @Injectable()
 export class LoginService {
-    constructor(@InjectModel(User.name) private userModel: Model<User>, private auth_service: AuthService) {}
+    constructor(
+        private auth_service: AuthService,
+        private prisma: PrismaService
+    ) {}
 
     async login (body) {
         const {email, password} = body
@@ -26,7 +26,10 @@ export class LoginService {
             }
         }
         
-        let user = await this.userModel.findOne({email})
+        let user = await this.prisma.user.findFirst({
+            where: {email: email}
+        })
+
         if (user)
         {
             let checkpass = await bcrypt.compare(password, user.password)
@@ -55,7 +58,9 @@ export class LoginService {
     async verify (body) {
         const { token } = body
         let verified_user: any = await this.auth_service.auth_verification(token)
-        const user = await this.userModel.findOne({email: verified_user.user.email})
+        const user = await this.prisma.user.findFirst({
+            where: {email: verified_user.user.email}
+        })
         verified_user.user = user
         return verified_user
     }
