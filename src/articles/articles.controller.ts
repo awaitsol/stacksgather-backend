@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Param, Post, Put, Req } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { Article } from './article.schema';
-import { IReturn } from 'shared/types';
+import { IError, IReturn } from 'shared/types';
 
 interface ReturnInterface extends IReturn {
   article: Article,
@@ -34,7 +34,7 @@ export class ArticlesController {
   }
 
   @Put()
-  async update(@Req() req, res): Promise<IReturn> {
+  async update(@Req() req, res): Promise<IReturn | IError> {
     let { body } = req
     return this.articleService.update(body, body.id)
   }

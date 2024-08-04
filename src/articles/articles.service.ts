@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Article } from './article.schema';
 import { Model, Types } from 'mongoose';
-import { IReturn } from 'shared/types';
+import { IError, IReturn } from 'shared/types';
 import { PrismaService } from 'prisma/primsa.service';
 
 interface ReturnInterface extends IReturn {
@@ -83,17 +83,26 @@ export class ArticlesService {
         }
     }
 
-    async update(article: any, id: number): Promise<IReturn> {
-        const slug = article.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
-        delete article.categories
-        delete article.tags
-        await this.prisma.article.update({
-            where: {id: id}, data: {...article, slug: slug}
-        })
-
-        return {
-            status: 200,
-            message: 'article updated successfully.',
+    async update(article: any, id: number): Promise<IReturn | IError> {
+        try {
+            const slug = article.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
+            delete article.categories
+            delete article.tags
+            await this.prisma.article.update({
+                where: {id: id}, data: {...article, slug: slug}
+            })
+    
+            return {
+                status: 200,
+                message: 'article updated successfully.',
+            }
+        }
+        catch (e) {
+            return {
+                status: 404,
+                message: e.message,
+                error: e
+            }
         }
     }
 
