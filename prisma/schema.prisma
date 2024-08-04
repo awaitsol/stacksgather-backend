@@ -61,6 +61,7 @@ model Article {
   id                Int @default(autoincrement()) @id
   title             String @db.VarChar(255)
   description       String? @db.Text
+  short_descripton  String? @db.Text
   thumbnail         String? @db.LongText
   meta_description  String? @db.Text
   slug              String @db.VarChar(255)
