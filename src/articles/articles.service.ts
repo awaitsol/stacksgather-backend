@@ -19,6 +19,18 @@ export class ArticlesService {
 
     async findAll(): Promise<any[]> {
         return await this.prisma.article.findMany({
+            include: {
+                tags: {
+                    select: {
+                        tag: true
+                    }
+                },
+                categories: {
+                    select: {
+                        category: true
+                    }
+                }
+            },
             orderBy: { id: "desc" }
         })
     }
@@ -73,6 +85,8 @@ export class ArticlesService {
 
     async update(article: any, id: number): Promise<IReturn> {
         const slug = article.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
+        delete article.categories
+        delete article.tags
         await this.prisma.article.update({
             where: {id: id}, data: {...article, slug: slug}
         })

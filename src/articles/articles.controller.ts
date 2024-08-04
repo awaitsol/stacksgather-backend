@@ -36,7 +36,7 @@ export class ArticlesController {
   @Put()
   async update(@Req() req, res): Promise<IReturn> {
     let { body } = req
-    return this.articleService.update(body, body._id)
+    return this.articleService.update(body, body.id)
   }
 
   @Delete(':id')
