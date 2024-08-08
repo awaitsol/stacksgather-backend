@@ -38,7 +38,7 @@ export class CategoriesController {
   @Put()
   async update(@Req() req, res): Promise<IReturn> {
     let { body } = req
-    return this.categoriesService.update(body, body._id)
+    return this.categoriesService.update(body, body.id)
   }
 
   @Delete()

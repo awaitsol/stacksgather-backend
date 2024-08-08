@@ -64,7 +64,7 @@ export class CategoriesService {
         const slug = category.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
         const _category = await this.prisma.category.update({
             where: { id: id },
-            data: { thumbnail: category.thumbnail, title: category.title, parent_id: category.parent_id as number, slug: slug }
+            data: { thumbnail: category.thumbnail, title: category.title, parent_id: Number(category.parent_id), slug: slug }
         })
 
         return {

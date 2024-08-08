@@ -14,6 +14,12 @@ export class FilesController {
         res.sendFile(filename, {root: './assets/uploads'})
     }
 
+    @Get(':folder/:filename')
+    async getFolderFile(@Param('folder') folder, @Param('filename') filename, @Res() res) {
+        res.sendFile(filename, {root: `./assets/uploads/${folder}`})
+    }
+
+    // Upload text editor photos
     @Post()
     @UseInterceptors(FileInterceptor('file'))
     async uploadFile(@UploadedFile() file) {
@@ -35,5 +41,53 @@ export class FilesController {
         console.log('file', file)
         const picture_file = await this.fileService.uploadFile(file)
         return picture_file
+    }
+
+    // Upload user photo
+    @Post('/upload-user-photo')
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+          destination: 'assets/uploads/users',
+          filename: (req, file, cb) => {
+            const fileNameArr = file.originalname.split('.')
+            const fileName = `user-${new Date().getTime()}.${fileNameArr[fileNameArr.length - 1]}`
+            cb(null, fileName);
+          },
+        }),
+    }))
+    async uploadUserFile(@UploadedFile() file) {
+        return this.fileService.uploadFile(file)
+    }
+
+    // Upload category thumbnail
+    @Post('/upload-category-thumbnail')
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+          destination: 'assets/uploads/categories',
+          filename: (req, file, cb) => {
+            const fileNameArr = file.originalname.split('.')
+            const fileName = `user-${new Date().getTime()}.${fileNameArr[fileNameArr.length - 1]}`
+            cb(null, fileName);
+          },
+        }),
+    }))
+    async uploadCategoryFile(@UploadedFile() file) {
+        return this.fileService.uploadFile(file)
+    }
+
+    // Upload article thumbnail
+    @Post('/upload-article-thumbnail')
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+          destination: 'assets/uploads/articles',
+          filename: (req, file, cb) => {
+            const fileNameArr = file.originalname.split('.')
+            const fileName = `article-${new Date().getTime()}.${fileNameArr[fileNameArr.length - 1]}`
+            cb(null, fileName);
+          },
+        }),
+    }))
+    async uploadArticleFile(@UploadedFile() file) {
+        return this.fileService.uploadFile(file)
     }
 }

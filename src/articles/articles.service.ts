@@ -86,10 +86,30 @@ export class ArticlesService {
     async update(article: any, id: number): Promise<IReturn | IError> {
         try {
             const slug = article.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
+            const categoryIds = article.categories
+            const tagIds = article.tags
             delete article.categories
             delete article.tags
             await this.prisma.article.update({
                 where: {id: id}, data: {...article, slug: slug}
+            })
+
+            await this.prisma.articleTags.deleteMany({
+                where: {
+                    articleId: id
+                }
+            })
+            await this.prisma.articleTags.createMany({
+                data: tagIds.map(tagId => ({ articleId: id, tagId: tagId }))
+            })
+
+            await this.prisma.articleCategories.deleteMany({
+                where: {
+                    articleId: id
+                }
+            })
+            await this.prisma.articleCategories.createMany({
+                data: categoryIds.map(catId => ({ articleId: id, categoryId: catId }))
             })
     
             return {
