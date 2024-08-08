@@ -38,7 +38,6 @@ export class FilesController {
         }),
     }), )
     async uploadUserProfile(@UploadedFile() file: any, @Req() req) {
-        console.log('file', file)
         const picture_file = await this.fileService.uploadFile(file)
         return picture_file
     }
