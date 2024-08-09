@@ -41,7 +41,7 @@ export class ArticlesController {
 
   @Delete(':id')
   async delete(@Param('id') id, @Req() req) {
-    return this.articleService.delete(id)
+    return this.articleService.delete(Number(id))
   }
 
   @Post('/articles-by-tag-ids')

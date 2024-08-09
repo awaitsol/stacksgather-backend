@@ -73,9 +73,23 @@ export class ArticlesService {
 
     async save(article: any): Promise<ReturnInterface> {
         const slug = article.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
+        const categoryIds = article.categories
+        const tagIds = article.tags
+        delete article.categories
+        delete article.tags
+
         const new_article = await this.prisma.article.create({
             data: {...article, slug: slug}
         })
+
+        await this.prisma.articleTags.createMany({
+            data: tagIds.map(tagId => ({ articleId: new_article.id, tagId: tagId }))
+        })
+
+        await this.prisma.articleCategories.createMany({
+            data: categoryIds.map(catId => ({ articleId: new_article.id, categoryId: catId }))
+        })
+
         return {
             status: 200,
             message: 'article saved successfully.',
@@ -127,7 +141,9 @@ export class ArticlesService {
     }
 
     async delete(id: number) {
-        await this.prisma.article.delete({where: {id: id}})
+        await this.prisma.articleCategories.deleteMany({where: {articleId: id}});
+        await this.prisma.articleTags.deleteMany({where: {articleId: id}});
+        await this.prisma.article.delete({where: {id: Number(id)}});
         return {
             status: 200,
             message: 'article deleted successfully'
