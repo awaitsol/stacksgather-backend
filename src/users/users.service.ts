@@ -90,14 +90,18 @@ export class UsersServices {
         })
 
         let checkpass = await bcrypt.compare(password, user.password)
+
         if(checkpass)
         {
             let new_password_hash = await bcrypt.hash(new_password, 12)
 
-            this.prisma.user.update({
+            await this.prisma.user.update({
                 where: {email: verified_user.user.email},
-                data: {password: new_password_hash}
+                data: {
+                    password: new_password_hash
+                }
             })
+
             return {
                 status: 200,
                 message: 'Password changed successfully.'
@@ -105,7 +109,7 @@ export class UsersServices {
         }
         else {
             return {
-                status: 200,
+                status: 401,
                 message: 'Current password is in-valid.'
             }
         }
