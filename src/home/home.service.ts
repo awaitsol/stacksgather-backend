@@ -67,7 +67,12 @@ export class HomeService {
                     select: {
                         article: {
                             include: {
-                                author: true
+                                author: true,
+                                categories: {
+                                    select: {
+                                        category: true
+                                    }
+                                },
                             }
                         }
                     }
