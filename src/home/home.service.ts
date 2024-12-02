@@ -19,23 +19,10 @@ export class HomeService {
     ){}
 
     async get() {
-        // const articles = await this.articleModel.aggregate([
-        //     {
-        //         $lookup: {
-        //             from: "tags",
-        //             localField: "tags", // Use the individual customer_id
-        //             foreignField: "_id",
-        //             as: "tag_info"
-        //         }
-        //     },
-        //     {
-        //         $sort: { _id: -1 }
-        //     },
-        //     { $limit: 10 }
-        // ])
 
         const articles = await this.prisma.article.findMany({
             include: {
+                author: true,
                 categories: {
                     select: {
                         category: true
