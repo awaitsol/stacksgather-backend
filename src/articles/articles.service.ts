@@ -51,6 +51,7 @@ export class ArticlesService {
         return await this.prisma.article.findFirst({
             where: {slug: slug},
             include: {
+                author: true,
                 categories: {
                     select: {
                         category: true
@@ -67,7 +68,20 @@ export class ArticlesService {
 
     async findSimilar(title: string): Promise<any[]> {
         return await this.prisma.article.findMany({
-            where: { title: { contains: title} }
+            where: { title: { contains: title} },
+            include: {
+                author: true,
+                categories: {
+                    select: {
+                        category: true
+                    }
+                },
+                tags: {
+                    select: {
+                        tag: true
+                    }
+                }
+            }
         })
     }
 
