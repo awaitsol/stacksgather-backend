@@ -67,8 +67,33 @@ export class ArticlesService {
     }
 
     async findSimilar(title: string): Promise<any[]> {
-        return await this.prisma.article.findMany({
-            where: { title: { contains: title} },
+
+        const artilce = await this.prisma.article.findFirst({
+            where: {title: {contains: title}},
+            select: {
+                categories: {
+                    select: {categoryId: true}
+                },
+                tags: {
+                    select: { tagId: true }
+                }
+            }
+        })
+
+        const similar_tags = artilce.tags.map(t => t.tagId)
+        const similar_catgories = artilce.categories.map(t => t.categoryId)
+
+        const similar_articles = await this.prisma.article.findMany({
+            where: {
+                OR: [
+                    { tags: { some: { tagId: { in: similar_tags } } } },
+                    { categories: { some: { categoryId: { in: similar_catgories } } } }
+                ]
+            },
+            orderBy: {
+                id: "desc"
+            },
+            take: 6,
             include: {
                 author: true,
                 categories: {
@@ -83,6 +108,8 @@ export class ArticlesService {
                 }
             }
         })
+
+        return similar_articles;
     }
 
     async save(article: any): Promise<ReturnInterface> {
