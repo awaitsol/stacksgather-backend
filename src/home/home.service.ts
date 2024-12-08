@@ -36,7 +36,25 @@ export class HomeService {
             }
         })
 
+        const featuredArticles = await this.prisma.article.findMany({
+            where: { isFeatured: 1 },
+            include: {
+                author: true,
+                categories: {
+                    select: {
+                        category: true
+                    }
+                },
+                tags: {
+                    select: {
+                        tag: true
+                    }
+                }
+            }
+        })
+
         return {
+            featuredArticles, 
             articles
         };
     }
