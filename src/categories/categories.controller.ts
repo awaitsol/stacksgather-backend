@@ -26,7 +26,7 @@ export class CategoriesController {
   @Post('by-parent-id')
   async findMainCategories(@Req() req, res): Promise<Category[]> {
     let { body } = req
-    return this.categoriesService.findMain((body.parent_id))
+    return this.categoriesService.findMain(body.parent_id)
   }
 
   @Post()

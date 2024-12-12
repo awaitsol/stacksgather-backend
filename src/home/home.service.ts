@@ -59,8 +59,15 @@ export class HomeService {
         };
     }
 
-    async getArticles() {
+    async getArticlesByCategoryId(id: string) {
         const articles = await this.prisma.article.findMany({
+            where: {
+                categories: {
+                    some: {
+                        categoryId: Number(id)
+                    }
+                }
+            },
             include: {
                 categories: {
                     select: {

@@ -37,7 +37,7 @@ export class CategoriesService {
 
     async findMain(id: number): Promise<Category[]> {
         return await this.prisma.category.findMany({
-            where: id ? { parent_id: Number(id) } : {},
+            where: id ? { parent_id: Number(id) } : {parent_id: 0},
             orderBy: {
                 id: "desc"
             }

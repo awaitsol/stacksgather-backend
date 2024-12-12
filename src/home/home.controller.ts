@@ -10,9 +10,9 @@ export class HomeController {
         return await this.homeServices.get()
     }
 
-    @Get('articles')
-    async getArticles() {
-        return await this.homeServices.getArticles()
+    @Get('articles-by-category/:id')
+    async getArticles(@Param('id') id: string, @Req() req) {
+        return await this.homeServices.getArticlesByCategoryId(id)
     }
 
     @Get('tag/:id')
