@@ -21,6 +21,7 @@ export class HomeService {
     async get() {
 
         const articles = await this.prisma.article.findMany({
+            orderBy: { id: "desc" },
             include: {
                 author: true,
                 categories: {
@@ -59,6 +60,47 @@ export class HomeService {
         };
     }
 
+    async searchArticles(queryString) {
+        const articles = await this.prisma.article.findMany({
+            orderBy: { id: "desc" },
+            where: {
+                OR: [
+                    {
+                        categories: {
+                            some: {
+                                category: { title: { contains: queryString} }
+                            }
+                        }
+                    },
+                    {
+                        tags: { 
+                            some: { 
+                                tag: { title: { contains: queryString } }
+                            }
+                        }
+                    },
+                    {
+                        title: { contains: queryString }
+                    }
+                ]
+            },
+            include: {
+                tags: {
+                    select: {
+                        tag: true
+                    }
+                },
+                categories: {
+                    select: {
+                        category: true
+                    }
+                },
+            }
+        });
+
+        return articles;
+    }
+
     async getArticlesByCategoryId(id: string) {
         const articles = await this.prisma.article.findMany({
             where: {
@@ -75,7 +117,7 @@ export class HomeService {
                     }
                 }
             }
-        })
+        });
     
         return {
             articles
