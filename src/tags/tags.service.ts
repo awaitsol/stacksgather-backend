@@ -13,16 +13,28 @@ export class TagsService {
         private prisma: PrismaService
     ){}
 
-    async findAll(): Promise<any[]> {
+    async findAll(search?: string): Promise<any[]> {
+        const queryString = search.length > 0 ? {
+            OR: [
+                {
+                    title: { contains: search }
+                },
+                {
+                    slug: { contains: search }
+                }
+            ]
+        } : {};
+
         return await this.prisma.tag.findMany({
+            where: { ...queryString },
             orderBy: {
                 id: "desc"
             }
-        })
+        });
     }
 
     async find(body): Promise<any> {
-        return await this.prisma.tag.findFirst({where: body})
+        return await this.prisma.tag.findFirst({where: body});
     }
 
     async save(tag: any): Promise<ReturnInterface> {
@@ -32,13 +44,13 @@ export class TagsService {
             data: {
                 ...tag, slug: slug
             }
-        })
+        });
 
         return {
             status: 200,
             message: 'tag saved successfully.',
             tag: new_tag
-        }
+        };
     }
 
     async update(tag: any, id: number): Promise<ReturnInterface> {

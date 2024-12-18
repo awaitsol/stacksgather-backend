@@ -17,8 +17,21 @@ export class ArticlesService {
         private prisma: PrismaService
     ){}
 
-    async findAll(): Promise<any[]> {
+    async findAll(search?: string): Promise<any[]> {
+
+        const queryString = search.length > 0 ? {
+            OR: [
+                {
+                    title: { contains: search }
+                },
+                {
+                    slug: { contains: search }
+                }
+            ]
+        } : {};
+
         return await this.prisma.article.findMany({
+            where: { ...queryString },
             include: {
                 tags: {
                     select: {
@@ -32,7 +45,7 @@ export class ArticlesService {
                 }
             },
             orderBy: { id: "desc" }
-        })
+        });
     }
 
     async findAllWithTags(): Promise<any[]> {

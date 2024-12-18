@@ -35,13 +35,28 @@ export class CategoriesService {
         })
     }
 
-    async findMain(id: number): Promise<Category[]> {
+    async findMain(id: number, search?: string): Promise<Category[]> {
+
+        const queryString = search.length > 0 ? {
+            OR: [
+                {
+                    title: { contains: search }
+                },
+                {
+                    slug: { contains: search }
+                }
+            ]
+        } : {};
+
         return await this.prisma.category.findMany({
-            where: id ? { parent_id: Number(id) } : {parent_id: 0},
+            where: {
+                parent_id: id ? Number(id) : 0,
+                ...queryString
+            },
             orderBy: {
                 id: "desc"
             }
-        })
+        });
     }
 
     async save(category: Category): Promise<ReturnInterface> {

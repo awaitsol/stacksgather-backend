@@ -13,8 +13,9 @@ export class ArticlesController {
   constructor(private readonly articleService: ArticlesService) {}
 
   @Get()
-  async findAll(): Promise<Article[]> {
-    return this.articleService.findAll()
+  async findAll(@Req() req): Promise<Article[]> {
+    const { query } = req;
+    return this.articleService.findAll(query?.search);
   }
 
   @Get(':slug')

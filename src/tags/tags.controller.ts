@@ -13,13 +13,14 @@ export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
 
   @Get()
-  async findAll(): Promise<Tag[]> {
-    return this.tagsService.findAll()
+  async findAll(@Req() req): Promise<Tag[]> {
+    const { query } = req;
+    return this.tagsService.findAll(query.search);
   }
 
   @Post('get-tag')
   async getTag(@Req() req, res): Promise<Tag> {
-    let {body} = req
+    let { body } = req
     return this.tagsService.find(body)
   }
 
