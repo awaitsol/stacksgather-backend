@@ -37,7 +37,7 @@ export class CategoriesService {
 
     async findMain(id: number, search?: string): Promise<Category[]> {
 
-        const queryString = search.length > 0 ? {
+        const queryString = Number(search?.length ?? 0) > 0 ? {
             OR: [
                 {
                     title: { contains: search }
