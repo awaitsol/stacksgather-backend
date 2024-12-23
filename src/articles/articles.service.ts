@@ -19,7 +19,7 @@ export class ArticlesService {
 
     async findAll(search?: string): Promise<any[]> {
 
-        const queryString = search.length > 0 ? {
+        const queryString = search?.length > 0 ? {
             OR: [
                 {
                     title: { contains: search }
