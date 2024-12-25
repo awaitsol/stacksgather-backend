@@ -59,7 +59,7 @@ export class LoginService {
         const { token } = body
         let verified_user: any = await this.auth_service.auth_verification(token)
         const user = await this.prisma.user.findFirst({
-            where: {email: verified_user.user.email}
+            where: {email: verified_user.user?.email}
         })
         verified_user.user = user
         return verified_user
