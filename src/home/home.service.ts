@@ -39,6 +39,7 @@ export class HomeService {
 
         const featuredArticles = await this.prisma.article.findMany({
             where: { isFeatured: 1 },
+            orderBy: { id: "desc" },
             include: {
                 author: true,
                 categories: {
