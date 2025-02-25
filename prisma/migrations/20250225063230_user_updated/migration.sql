@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `users` ADD COLUMN `type` ENUM('STAFF', 'SITE') NOT NULL DEFAULT 'SITE';
