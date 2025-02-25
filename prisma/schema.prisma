@@ -24,6 +24,11 @@ enum Status {
   DELETED
 }
 
+enum UserType {
+  STAFF
+  SITE
+}
+
 model User {
   id         Int      @id @default(autoincrement())
   first_name String
@@ -33,6 +38,7 @@ model User {
   profile    String?  @db.LongText
   role       Role     @default(USER)
   status     Status   @default(ACTIVE)
+  type       UserType @default(SITE)
   createdBy  Int?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
