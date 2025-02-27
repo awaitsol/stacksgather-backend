@@ -16,17 +16,13 @@ datasource db {
 enum Role {
   USER
   ADMIN
+  STAFF
 }
 
 enum Status {
   ACTIVE
   INACTIVE
   DELETED
-}
-
-enum UserType {
-  STAFF
-  SITE
 }
 
 model User {
@@ -38,7 +34,6 @@ model User {
   profile    String?  @db.LongText
   role       Role     @default(USER)
   status     Status   @default(ACTIVE)
-  type       UserType @default(SITE)
   createdBy  Int?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

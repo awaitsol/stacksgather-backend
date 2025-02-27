@@ -32,7 +32,7 @@ export class MailService {
     async sendMail(to: string, subject: string) {
         try {
             const jwtToken = await this.auth_service.auth_sign({ to });
-            const verifyLink = `${process.env.WEBSITE_DOMAIN}/auth/verify-email/${jwtToken}`
+            const verifyLink = `${process.env.WEBSITE_DOMAIN}/auth/signup?token=${jwtToken}`
             const htmlContent = await this.compileTemplate('register-mail', { to, verifyLink });
             const info = await this.transporter.sendMail({
                 from: `"Stacks Gather" ${process.env.MAIL_USERNAME}`,
@@ -41,7 +41,10 @@ export class MailService {
                 html: htmlContent,
             });
             
-            return info;
+            return {
+                status: 200,
+                message: "mail successfully sent"
+            };
         } catch (error) {
             console.error('Error sending email:', error);
             throw error;

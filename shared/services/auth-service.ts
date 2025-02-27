@@ -1,6 +1,5 @@
 import { sign, verify } from "jsonwebtoken"
 import { StringValue } from "ms"
-import { SECRET_KEY } from "shared/constants"
 
 type expiresInType = StringValue | number
 
@@ -22,8 +21,8 @@ export class AuthService {
         }
         catch (e) {
             return {
-                status: e.name,
-                message: e.message
+                status: 400,
+                message: "User not authorized!",
             }
         }
     }
