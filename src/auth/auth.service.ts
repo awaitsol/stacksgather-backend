@@ -107,4 +107,51 @@ export class AuthService {
             user: null
         }
     }
+
+    async loginWithGoolge(email: string) {
+        const user = await this.prisma.user.findFirst({
+            where: { email: email }
+        })
+        
+        if(!user) return {
+            status: 400,
+            user: null,
+            message: 'Kindly signup before login!'
+        }
+            
+        this.setToken({email: user.email})
+        return {
+            status: 200,
+            user: user,
+            token: this.token
+        }
+    }
+
+    async signUpWithGoolge(data: any) {
+        const exist = await this.prisma.user.findFirst({
+            where: { email: data.email }
+        })
+
+        if(exist) return {
+            status: 400,
+            error: true,
+            message: 'User already exist!',
+            token: null,
+            user: null
+        }
+
+        const user = await this.prisma.user.create({
+            data: {...data, password: null, role: "USER", loginType: "GOOGLE"}
+        })
+
+        let token = await this.authenticateService.auth_sign({email: user.email})
+
+        return {
+            status: 200,
+            user: user,
+            token,
+            error: false,
+            message: 'Account successfully created.'
+        }
+    }
 }

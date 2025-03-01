@@ -32,4 +32,15 @@ export class AuthController {
         const { token } = body
         return await this.autheService.getVerifiedUser(token)
     }
+
+    @Post('google-signin')
+    async loginWithGoolge(@Body() body) {
+        const { email } = body
+        return await this.autheService.loginWithGoolge(email)
+    }
+
+    @Post('google-signup')
+    async signUpWithGoolge(@Body() body) {
+        return await this.autheService.signUpWithGoolge(body)
+    }
 }
