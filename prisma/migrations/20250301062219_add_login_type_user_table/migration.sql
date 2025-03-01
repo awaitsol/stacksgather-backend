@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `users` ADD COLUMN `loginType` ENUM('DEFAULT', 'GOOGLE') NULL DEFAULT 'DEFAULT';

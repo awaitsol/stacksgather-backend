@@ -1,12 +1,13 @@
 import { sign, verify } from "jsonwebtoken"
-import { SECRET_KEY } from "shared/constants"
+import { StringValue } from "ms"
+
+type expiresInType = StringValue | number
 
 export class AuthService {
     constructor() {}
 
-    async auth_sign(payload) {
-        const {first_name, last_name, email} = payload
-        return await sign({first_name, last_name, email}, process.env.SECRET_KEY, {expiresIn: '7D'})
+    async auth_sign(payload: any, expiresIn: expiresInType = '7D'): Promise<string> {
+        return await sign(payload, process.env.SECRET_KEY, { expiresIn: (expiresIn as expiresInType) })
     }
 
     async auth_verification(token: string) {
@@ -20,8 +21,8 @@ export class AuthService {
         }
         catch (e) {
             return {
-                status: e.name,
-                message: e.message
+                status: 400,
+                message: "User not authorized!",
             }
         }
     }

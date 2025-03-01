@@ -11,6 +11,8 @@ import { ArticlesModule } from './articles/articles.module';
 import { TagsModule } from './tags/tags.module';
 import { PagesModule } from './pages/page.module';
 import { HomeModule } from './home/home.module';
+import { AuthModule } from './auth/auth.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -28,7 +30,9 @@ import { HomeModule } from './home/home.module';
     FilesModule,
     ArticlesModule,
     PagesModule,
-    HomeModule
+    HomeModule,
+    AuthModule,
+    MailModule
   ],
   controllers: [AppController],
   providers: [AppService],

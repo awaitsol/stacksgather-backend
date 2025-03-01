@@ -46,7 +46,8 @@ export class UsersServices {
                 }
             })
 
-            let token = await this.auth_service.auth_sign(_user)
+            const {first_name, last_name, email} = _user
+            let token = await this.auth_service.auth_sign({first_name, last_name, email})
             return {
                 status: 200,
                 message: "User created successfully",

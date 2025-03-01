@@ -39,7 +39,8 @@ export class LoginService {
                     error: "Credentials are invalid!"
                 } 
             }
-            let token = await this.auth_service.auth_sign(user)
+            const {first_name, last_name, email} = user
+            let token = await this.auth_service.auth_sign({first_name, last_name, email})
             return {
                 status: 200,
                 message: "loggedin successfully",

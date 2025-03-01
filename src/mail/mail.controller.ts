@@ -1,0 +1,12 @@
+import { Body, Controller, Post } from '@nestjs/common';
+import { MailService } from './mail.service';
+
+@Controller('mail')
+export class MailController {
+    constructor(private mailService: MailService) {}
+
+    @Post('verify-email')
+    verifyRegistrationEmail (@Body() body) {
+        return this.mailService.sendMail(body.to, body.subject)
+    }
+}
