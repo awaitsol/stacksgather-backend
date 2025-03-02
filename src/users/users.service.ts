@@ -42,7 +42,7 @@ export class UsersServices {
                     email: user.email,
                     password: user.password,
                     profile: user.profile,
-                    role: "USER"
+                    role: "STAFF"
                 }
             })
 
