@@ -110,7 +110,7 @@ export class AuthService {
 
     async loginWithGoolge(email: string) {
         const user = await this.prisma.user.findFirst({
-            where: { email: email }
+            where: { email: email, role: 'USER' }
         })
         
         if(!user) return {
