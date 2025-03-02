@@ -45,6 +45,11 @@ export class ArticlesController {
     return this.articleService.delete(Number(id))
   }
 
+  @Get('/user/:id')
+  async userArticles(@Param('id') id, @Req() req) {
+    return this.articleService.userArticles(id)
+  }
+
   @Post('/articles-by-tag-ids')
   async getMultipleArticleByTagIds(@Req() req) {
     let { body } = req

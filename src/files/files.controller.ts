@@ -81,7 +81,7 @@ export class FilesController {
           destination: 'assets/uploads/articles',
           filename: (req, file, cb) => {
             const fileNameArr = file.originalname.split('.')
-            const fileName = `article-${new Date().getTime()}.${fileNameArr[fileNameArr.length - 1]}`
+            const fileName = `article-${req.query?.id ? req.query?.id+'-' : ''}${new Date().getTime()}.${fileNameArr[fileNameArr.length - 1]}`
             cb(null, fileName);
           },
         }),
