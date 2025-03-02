@@ -72,14 +72,20 @@ model Category {
   @@map("categories")
 }
 
+enum DESC_TYPE {
+  DEFAULT
+  EDITORJS
+}
+
 model Article {
   id                Int                 @id @default(autoincrement())
   title             String              @db.VarChar(255)
   description       String?             @db.Text
+  desc_type         DESC_TYPE?          @default(DEFAULT)
   short_description String?             @db.Text
   thumbnail         String?             @db.LongText
   meta_description  String?             @db.Text
-  reading_time      String?              @db.VarChar(50)
+  reading_time      String?             @db.VarChar(50)
   isFeatured        Int?                @db.TinyInt @default(0)
   slug              String              @db.VarChar(255)
   categories        ArticleCategories[]

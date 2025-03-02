@@ -127,15 +127,20 @@ export class ArticlesService {
 
     async save(article: any): Promise<ReturnInterface> {
         const slug = article.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
-        const categoryIds = article.categories
-        const tagIds = article.tags
+        const categoryIds = article.categories ?? []
+        const tagIds = article.tags ?? []
         delete article.categories
         delete article.tags
 
-        const new_article = await this.prisma.article.create({
+        let new_article = await this.prisma.article.create({
             data: {...article, slug: slug}
         })
 
+        new_article = await this.prisma.article.update({
+            where: {id: new_article.id},
+            data: { slug: `${new_article.id}-${slug}` }
+        })
+        
         await this.prisma.articleTags.createMany({
             data: tagIds.map(tagId => ({ articleId: new_article.id, tagId: tagId }))
         })
@@ -154,8 +159,8 @@ export class ArticlesService {
     async update(article: any, id: number): Promise<IReturn | IError> {
         try {
             const slug = article.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
-            const categoryIds = article.categories
-            const tagIds = article.tags
+            const categoryIds = article.categories ?? []
+            const tagIds = article.tags ?? []
             delete article.categories
             delete article.tags
             await this.prisma.article.update({
@@ -247,6 +252,29 @@ export class ArticlesService {
         return {
             status: 200,
             articles: articlesByTag
+        }
+    }
+
+    async userArticles(id) {
+        const articles = await this.prisma.article.findMany({
+            where: { authorId: Number(id) },
+            include: {
+                categories: {
+                    select: {
+                        category: true
+                    }
+                },
+                tags: {
+                    select: {
+                        tag: true
+                    }
+                }
+            }
+        })
+
+        return {
+            status: 200,
+            articles
         }
     }
 }

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `articles` ADD COLUMN `desc_type` ENUM('DEFAULT', 'EDITORJS') NULL DEFAULT 'DEFAULT';
