@@ -164,7 +164,7 @@ export class ArticlesService {
             delete article.categories
             delete article.tags
             await this.prisma.article.update({
-                where: {id: id}, data: {...article, slug: slug}
+                where: {id: id}, data: {...article, slug: `${id}-${slug}`}
             })
 
             await this.prisma.articleTags.deleteMany({
