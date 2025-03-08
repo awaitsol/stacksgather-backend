@@ -9,4 +9,9 @@ export class MailController {
     verifyRegistrationEmail (@Body() body) {
         return this.mailService.sendMail(body.to, body.subject)
     }
+
+    @Post('forget-password')
+    forgetPassword (@Body() body) {
+        return this.mailService.sendForgetPasswordMail(body.email)
+    }
 }

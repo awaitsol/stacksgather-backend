@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/primsa.service';
 import { AuthService as authenticateService } from 'shared/services/auth-service';
 import * as bcrypt from "bcrypt"
@@ -19,7 +19,7 @@ export class AuthService {
 
     async verifyRegisterationToken(token: string) {
         const jwtPayload = await this.authenticateService.auth_verification(token)
-        if(jwtPayload.status === 200)
+        if(jwtPayload.status === HttpStatus.OK)
         {
             const exist = await this.prisma.user.findFirst({
                 where: {email: (jwtPayload.user as any).to}
@@ -30,7 +30,7 @@ export class AuthService {
             }
         }
 
-        return { status: 400, message: "User is not valid!" }
+        return { status: HttpStatus.BAD_REQUEST, message: "User is not valid!" }
     }
 
     async signupAccount(user) {
@@ -41,7 +41,7 @@ export class AuthService {
             })
 
             if(exist) return {
-                status: 400,
+                status: HttpStatus.BAD_REQUEST,
                 message: 'User is already exist!'
             }
 
@@ -53,13 +53,13 @@ export class AuthService {
             let token = await this.authenticateService.auth_sign({email: _user.email})
     
             return {
-                status: 200,
+                status: HttpStatus.OK,
                 user: _user,
                 token
             }
         } catch (error) {
             return {
-                status: 400,
+                status: HttpStatus.BAD_REQUEST,
                 message: error.message
             }
         }
@@ -73,7 +73,7 @@ export class AuthService {
             }
         })
         if(!_user) return {
-            status: 400,
+            status: HttpStatus.BAD_REQUEST,
             message: 'Credentials are incorrect!'
         }
 
@@ -81,14 +81,14 @@ export class AuthService {
         if(!isUser)
         {
             return {
-                status: 400,
+                status: HttpStatus.BAD_REQUEST,
                 message: 'Credentials are incorrect!'
             }
         }
 
         this.setToken({email: _user.email})
 
-        return { status: 200, user: _user, token: this.token }
+        return { status: HttpStatus.OK, user: _user, token: this.token }
     }
 
     async getVerifiedUser(token) {
@@ -98,12 +98,12 @@ export class AuthService {
         })
 
         if(exist) return {
-            status: 200,
+            status: HttpStatus.OK,
             user: exist
         }
 
         return {
-            status: 400,
+            status: HttpStatus.BAD_REQUEST,
             user: null
         }
     }
@@ -114,14 +114,14 @@ export class AuthService {
         })
         
         if(!user) return {
-            status: 400,
+            status: HttpStatus.BAD_REQUEST,
             user: null,
             message: 'Kindly signup before login!'
         }
             
         this.setToken({email: user.email})
         return {
-            status: 200,
+            status: HttpStatus.OK,
             user: user,
             token: this.token
         }
@@ -133,7 +133,7 @@ export class AuthService {
         })
 
         if(exist) return {
-            status: 400,
+            status: HttpStatus.BAD_REQUEST,
             error: true,
             message: 'User already exist!',
             token: null,
@@ -147,11 +147,51 @@ export class AuthService {
         let token = await this.authenticateService.auth_sign({email: user.email})
 
         return {
-            status: 200,
+            status: HttpStatus.OK,
             user: user,
             token,
             error: false,
             message: 'Account successfully created.'
         }
+    }
+
+    async verifyResetPasswordToken({ token }) {
+        const jwtPayload = await this.authenticateService.auth_verification(token)
+        if(jwtPayload.status === HttpStatus.OK)
+        {
+            const exist = await this.prisma.user.findFirst({
+                where: {email: (jwtPayload.user as any).to}
+            })
+            if(exist)
+            {
+                return {...jwtPayload, user: exist}
+            }
+        }
+
+        return { status: HttpStatus.BAD_REQUEST, message: "Invalid Token!" }
+    }
+
+    async resetPassword({token, password}) {
+        const jwtPayload = await this.authenticateService.auth_verification(token)
+        if(jwtPayload.status === HttpStatus.OK)
+        {
+            const user = await this.prisma.user.findFirst({
+                where: {email: (jwtPayload.user as any).to}
+            })
+            if(user)
+            {
+                const newPassword = await bcrypt.hash(password, 12);
+                const new_user = await this.prisma.user.update({
+                    where: {email: user.email},
+                    data: {
+                        password: newPassword
+                    }
+                })
+
+                return { status: HttpStatus.OK, message: 'Password changed.', user: new_user }
+            }
+        }
+
+        return { status: HttpStatus.BAD_REQUEST, message: "Invalid Token!" }
     }
 }

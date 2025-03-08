@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password Mail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        .email-title {
+            font-size: 24px;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+        .email-text {
+            font-size: 16px;
+            color: #333333;
+            margin-bottom: 20px;
+        }
+        .verify-button {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .verify-button:hover {
+            text-decoration: underline;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #999999;
+        }
+        .footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <img src="https://via.placeholder.com/150" alt="Company Logo" class="logo">
+        
+        <h2 class="email-title">Hi {{user.first_name}}</h2>
+        
+        <p class="email-text">
+            We received a request to reset your password. Click the link below to set a new password for your <strong> StacksGather </strong> account.
+        </p>
+        
+        <a href={{newPasswordLink}} class="verify-button">Reset Password</a>
+        
+        <p class="email-text">
+            If you didn't request this, please ignore this email — your account is safe.  
+            <br />
+            This link will expire in 24 hours.
+            <br />
+            Thank you for being part of <strong>StacksGather</strong>.
+        </p>
+        
+        <p class="footer">Need help? Contact us at <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>
+        <p>Best regards, <br />
+        The StacksGather Team</p>
+        <br>
+        © {{year}} StacksGather. All rights reserved.
+        </p>
+    </div>
+</body>
+</html>

@@ -43,4 +43,14 @@ export class AuthController {
     async signUpWithGoolge(@Body() body) {
         return await this.autheService.signUpWithGoolge(body)
     }
+
+    @Post('reset-password-verify-token')
+    async verifyResetPasswordToken(@Body() body) {
+        return await this.autheService.verifyResetPasswordToken(body)
+    }
+
+    @Post('reset-password')
+    async resetPassword(@Body() body) {
+        return await this.autheService.resetPassword(body)
+    }
 }
