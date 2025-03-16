@@ -257,6 +257,7 @@ export class ArticlesService {
     async userArticles(id) {
         const articles = await this.prisma.article.findMany({
             where: { authorId: Number(id) },
+            orderBy: { id: "desc" },
             include: {
                 categories: {
                     select: {
