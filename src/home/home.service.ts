@@ -22,6 +22,7 @@ export class HomeService {
 
         const articles = await this.prisma.article.findMany({
             orderBy: { id: "desc" },
+            take: 9,
             include: {
                 author: true,
                 categories: {
@@ -61,9 +62,12 @@ export class HomeService {
         };
     }
 
-    async searchArticles(queryString) {
+    async searchArticles(queryString, query: any = {}) {
+        const { take, skip } = query
         const articles = await this.prisma.article.findMany({
             orderBy: { id: "desc" },
+            skip: Number(skip) ?? 0,
+            take: Number(take) ?? 9,
             where: {
                 OR: [
                     {
