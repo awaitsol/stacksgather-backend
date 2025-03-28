@@ -41,8 +41,8 @@ model User {
   loginType  LoginType?  @default(DEFAULT)
   role       Role        @default(USER)
   status     Status      @default(ACTIVE)
-  change_email_code String?
-  connect_google String?
+  change_email_code String? @default("")
+  connect_google String? @default("")
   createdBy  Int?
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
