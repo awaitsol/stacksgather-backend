@@ -28,8 +28,8 @@ export class AuthController {
     }
 
     @Post('get-verified-user')
-    async getVerifiedUser(@Body() body) {
-        const { token } = body
+    async getVerifiedUser(@Req() req) {
+        const { token } = req.body
         return await this.autheService.getVerifiedUser(token)
     }
 

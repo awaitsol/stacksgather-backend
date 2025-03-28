@@ -13,6 +13,7 @@ import { PagesModule } from './pages/page.module';
 import { HomeModule } from './home/home.module';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { MailModule } from './mail/mail.module';
     PagesModule,
     HomeModule,
     AuthModule,
-    MailModule
+    MailModule,
+    SettingsModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -14,4 +14,10 @@ export class MailController {
     forgetPassword (@Body() body) {
         return this.mailService.sendForgetPasswordMail(body.email)
     }
+
+    @Post('change-mail-address')
+    changeMailAddress (@Body() body) {
+        const { token, userId, new_email } = body
+        return this.mailService.changeMailAddress(token, userId, new_email)
+    }
 }

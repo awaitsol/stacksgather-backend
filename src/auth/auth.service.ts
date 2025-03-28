@@ -33,6 +33,7 @@ export class AuthService {
         return { status: HttpStatus.BAD_REQUEST, message: "User is not valid!" }
     }
 
+    // SignUp Function By Form
     async signupAccount(user) {
         try {
 
@@ -50,12 +51,11 @@ export class AuthService {
                 data: {...user, role: "USER"}
             })
 
-            let token = await this.authenticateService.auth_sign({email: _user.email})
-    
+            await this.setToken({email: _user.email})
             return {
                 status: HttpStatus.OK,
                 user: _user,
-                token
+                token: this.token
             }
         } catch (error) {
             return {
@@ -65,6 +65,35 @@ export class AuthService {
         }
     }
 
+    // SignUp Function By Google
+    async signUpWithGoolge(data: any) {
+        const exist = await this.prisma.user.findFirst({
+            where: { email: data.email }
+        })
+
+        if(exist) return {
+            status: HttpStatus.BAD_REQUEST,
+            error: true,
+            message: 'User already exist!',
+            token: null,
+            user: null
+        }
+
+        const user = await this.prisma.user.create({
+            data: {...data, password: null, role: "USER", loginType: "GOOGLE"}
+        })
+
+        await this.setToken({email: user.email})
+        return {
+            status: HttpStatus.OK,
+            user: user,
+            token: this.token,
+            error: false,
+            message: 'Account successfully created.'
+        }
+    }
+
+    // SignIn Function By Form
     async signInAccount(data) {
         const _user = await this.prisma.user.findFirst({
             where: {
@@ -86,13 +115,33 @@ export class AuthService {
             }
         }
 
-        this.setToken({email: _user.email})
-
+        await this.setToken({email: _user.email})
         return { status: HttpStatus.OK, user: _user, token: this.token }
+    }
+
+    // SignIn Function By Google
+    async loginWithGoolge(email: string) {
+        const user = await this.prisma.user.findFirst({
+            where: { email: email, role: 'USER' }
+        })
+        
+        if(!user) return {
+            status: HttpStatus.BAD_REQUEST,
+            user: null,
+            message: 'Kindly signup before login!'
+        }
+            
+        await this.setToken({email: user.email})
+        return {
+            status: HttpStatus.OK,
+            user: user,
+            token: this.token
+        }
     }
 
     async getVerifiedUser(token) {
         const jwtPayload = await this.authenticateService.auth_verification(token)
+        console.log('jwtPayload', jwtPayload)
         const exist = await this.prisma.user.findFirst({
             where: {email: (jwtPayload.user as any).email}
         })
@@ -105,53 +154,6 @@ export class AuthService {
         return {
             status: HttpStatus.BAD_REQUEST,
             user: null
-        }
-    }
-
-    async loginWithGoolge(email: string) {
-        const user = await this.prisma.user.findFirst({
-            where: { email: email, role: 'USER' }
-        })
-        
-        if(!user) return {
-            status: HttpStatus.BAD_REQUEST,
-            user: null,
-            message: 'Kindly signup before login!'
-        }
-            
-        this.setToken({email: user.email})
-        return {
-            status: HttpStatus.OK,
-            user: user,
-            token: this.token
-        }
-    }
-
-    async signUpWithGoolge(data: any) {
-        const exist = await this.prisma.user.findFirst({
-            where: { email: data.email }
-        })
-
-        if(exist) return {
-            status: HttpStatus.BAD_REQUEST,
-            error: true,
-            message: 'User already exist!',
-            token: null,
-            user: null
-        }
-
-        const user = await this.prisma.user.create({
-            data: {...data, password: null, role: "USER", loginType: "GOOGLE"}
-        })
-
-        let token = await this.authenticateService.auth_sign({email: user.email})
-
-        return {
-            status: HttpStatus.OK,
-            user: user,
-            token,
-            error: false,
-            message: 'Account successfully created.'
         }
     }
 
