@@ -172,14 +172,13 @@ export class HomeService {
         for(let i = 0; i < categories.length; i++)
         {
             let category = categories[i]
-            console.log('category', category)
+            
             const parentCat = (category.parent_id && category.parent_id !== '0') ? await this.categoryModel.findOne({_id: new Types.ObjectId(category.parent_id)}) : null
             const parentBySlug = parentCat ? await this.prisma.category.findFirst({where: {slug: parentCat.slug}}) : null
 
             const existCat = await this.prisma.category.findFirst({where: {slug: category.slug}})
             if(!existCat)
             {
-                console.log('parentBySlug', parentBySlug)
                 let newResult = await this.prisma.category.create({
                     data: {
                         title: category.title,

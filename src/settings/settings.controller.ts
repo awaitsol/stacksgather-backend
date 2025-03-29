@@ -17,4 +17,10 @@ export class SettingsController {
         const { token, email} = req.body
         return this.settingService.connectWithGoogle(token, email);
     }
+
+    @Post('account/set-new-password')
+    setNewPassword(@Req() req) {
+        const { token, new_password } = req.body
+        return this.settingService.setNewPassword(token, new_password);
+    }
 }

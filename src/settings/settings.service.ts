@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/primsa.service';
 import { AuthService } from 'shared/services/auth-service';
-
+import * as bcrypt from "bcrypt"
 @Injectable()
 export class SettingsService {
 
@@ -56,5 +56,25 @@ export class SettingsService {
             user: user
         }
 
+    }
+
+    async setNewPassword(token: string, newPassword: string) {
+        const verifyToken = await this.auth_service.auth_verification(token)
+        if(verifyToken.status !== 200) {
+            return {
+                status: HttpStatus.BAD_REQUEST,
+                message: "Unauthorized token."
+            }
+        }
+        const newPass = await bcrypt.hash(newPassword, 12)
+        const user = await this.prisma.user.update({
+            where: { email: (verifyToken.user as any)?.email },
+            data: { password: newPass }
+        })
+
+        return {
+            status: HttpStatus.OK,
+            user: user
+        }
     }
 }

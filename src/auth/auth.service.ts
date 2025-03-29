@@ -141,7 +141,6 @@ export class AuthService {
 
     async getVerifiedUser(token) {
         const jwtPayload = await this.authenticateService.auth_verification(token)
-        console.log('jwtPayload', jwtPayload)
         const exist = await this.prisma.user.findFirst({
             where: {email: (jwtPayload.user as any).email}
         })
