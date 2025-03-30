@@ -66,8 +66,8 @@ export class HomeService {
         const { take, skip } = query
         const articles = await this.prisma.article.findMany({
             orderBy: { id: "desc" },
-            skip: Number(skip) ?? 0,
-            take: Number(take) ?? 9,
+            skip: Number(skip ?? 0),
+            take: Number(take ?? 9),
             where: {
                 OR: [
                     {
