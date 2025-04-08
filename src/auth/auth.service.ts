@@ -97,8 +97,7 @@ export class AuthService {
     async signInAccount(data) {
         const _user = await this.prisma.user.findFirst({
             where: {
-                email: data.email,
-                role: 'USER'
+                email: data.email
             }
         })
         if(!_user) return {
@@ -140,6 +139,13 @@ export class AuthService {
     }
 
     async getVerifiedUser(token) {
+        if (!token) {
+            return {
+                status: HttpStatus.BAD_REQUEST,
+                user: null
+            }
+        }
+
         const jwtPayload = await this.authenticateService.auth_verification(token)
         const exist = await this.prisma.user.findFirst({
             where: {email: (jwtPayload.user as any).email}
