@@ -12,10 +12,7 @@ interface ReturnInterface extends IReturn {
 
 @Injectable()
 export class ArticlesService {
-    constructor(
-        @InjectModel(Article.name) private articleModel: Model<Article>,
-        private prisma: PrismaService
-    ){}
+    constructor( private prisma: PrismaService ) {}
 
     async findAll(search?: string): Promise<any[]> {
 
@@ -73,6 +70,13 @@ export class ArticlesService {
                 tags: {
                     select: {
                         tag: true
+                    }
+                },
+                article_comments: {
+                    orderBy: { id: "desc" },
+                    include: {
+                        user: true,
+                        comment_responses: true
                     }
                 }
             }

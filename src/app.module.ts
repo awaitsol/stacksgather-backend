@@ -14,6 +14,7 @@ import { HomeModule } from './home/home.module';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { SettingsModule } from './settings/settings.module';
+import { ArticleCommentsModule } from './article-comments/article-comments.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { SettingsModule } from './settings/settings.module';
     HomeModule,
     AuthModule,
     MailModule,
-    SettingsModule
+    SettingsModule,
+    ArticleCommentsModule
   ],
   controllers: [AppController],
   providers: [AppService],
