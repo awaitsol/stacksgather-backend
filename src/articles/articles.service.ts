@@ -74,8 +74,12 @@ export class ArticlesService {
                 },
                 article_comments: {
                     orderBy: { id: "desc" },
+                    where: { replyToId: null },
                     include: {
                         user: true,
+                        reply_comments: {
+                            include: { user: true, reply_comment: true, comment_responses: true }
+                        },
                         comment_responses: true
                     }
                 }

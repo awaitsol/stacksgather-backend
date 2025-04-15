@@ -26,6 +26,7 @@ export class ArticleCommentsController {
   findAll() {
     return this.commentsService.findAll();
   }
+  
 
   @Get(':id')
   findOne(@Param('id') id: string) {
