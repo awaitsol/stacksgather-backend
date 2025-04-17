@@ -99,4 +99,18 @@ export class CategoriesService {
             message: 'category deleted successfully'
         }
     }
+
+    async userCategories(user_id: number) {
+        return await this.prisma.category.findMany({
+            where: {
+                articles: {
+                    some: {
+                        article: {
+                            authorId: user_id
+                        }
+                    }
+                }
+            }
+        })
+    }
 }

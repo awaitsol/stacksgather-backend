@@ -262,9 +262,21 @@ export class ArticlesService {
         }
     }
 
-    async userArticles(id) {
+    async userArticles(id, category_id) {
+        const whereConditions = category_id ? {
+            categories: {
+                some: {
+                    category: {
+                        id: category_id
+                    }
+                }
+            }
+        } : {}
         const articles = await this.prisma.article.findMany({
-            where: { authorId: Number(id) },
+            where: { 
+                authorId: Number(id),
+                ...whereConditions
+            },
             orderBy: { id: "desc" },
             include: {
                 categories: {

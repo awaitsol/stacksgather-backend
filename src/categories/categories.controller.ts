@@ -46,4 +46,11 @@ export class CategoriesController {
     let { body } = req
     return this.categoriesService.delete(body.id)
   }
+
+  @Post('user-categories')
+  async userCategories(@Req() req, res): Promise<Category[]> {
+    let { user_id } = req.body
+    return this.categoriesService.userCategories(user_id)
+  }
+
 }
