@@ -133,8 +133,18 @@ export class ArticlesService {
         return similar_articles;
     }
 
+    slugify = (title) => {
+        return title
+            .toLowerCase()
+            .trim()
+            .replace(/&/g, 'and')               // Replace & with 'and'
+            .replace(/[^a-z0-9\s-]/g, '')       // Remove special characters
+            .replace(/\s+/g, '-')               // Replace spaces with hyphens
+            .replace(/-+/g, '-');               // Replace multiple hyphens with one
+    };
+
     async save(article: any): Promise<ReturnInterface> {
-        const slug = article.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
+        const slug = this.slugify(article.title);
         const categoryIds = article.categories ?? []
         const tagIds = article.tags ?? []
         delete article.categories
