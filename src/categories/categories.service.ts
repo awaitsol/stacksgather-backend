@@ -106,7 +106,7 @@ export class CategoriesService {
                 articles: {
                     some: {
                         article: {
-                            authorId: user_id
+                            authorId: Number(user_id)
                         }
                     }
                 }

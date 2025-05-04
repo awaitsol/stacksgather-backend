@@ -10,14 +10,9 @@ export class HomeController {
         return await this.homeServices.get()
     }
 
-    @Get('articles/search/:queryString?')
-    async searchArticles(@Param('queryString') queryString: string, @Req() req) {
-        return await this.homeServices.searchArticles(queryString, req.query)
-    }
-
-    @Get('articles-by-category/:id')
-    async getArticles(@Param('id') id: string, @Req() req) {
-        return await this.homeServices.getArticlesByCategoryId(id)
+    @Get('articles/search')
+    async searchArticles(@Req() req) {
+        return await this.homeServices.searchArticles(req.query)
     }
 
     @Get('tag/:id')

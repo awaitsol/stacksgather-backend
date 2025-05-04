@@ -62,34 +62,45 @@ export class HomeService {
         };
     }
 
-    async searchArticles(queryString, query: any = {}) {
-        const { take, skip } = query
+    async searchArticles(query: any = {}) {
+        const { categoryId, queryString, take, skip } = query
+        console.log('query', query);
+
+        let whereClause: any = {
+            OR: [
+                {
+                    categories: {
+                        some: categoryId ? {
+                            category: { title: { contains: queryString} },
+                            categoryId: Number(categoryId)
+                        } : {
+                            category: { title: { contains: queryString} },
+                        }
+                    }
+                },
+                {
+                    tags: { 
+                        some: { 
+                            tag: { title: { contains: queryString } }
+                        }
+                    }
+                },
+                {
+                    title: { contains: queryString }
+                }
+            ]
+        }
+        if(categoryId) whereClause.categories = { some: { categoryId: Number(categoryId) } }
+
         const articles = await this.prisma.article.findMany({
             orderBy: { id: "desc" },
             skip: Number(skip ?? 0),
             take: Number(take ?? 9),
             where: {
-                OR: [
-                    {
-                        categories: {
-                            some: {
-                                category: { title: { contains: queryString} }
-                            }
-                        }
-                    },
-                    {
-                        tags: { 
-                            some: { 
-                                tag: { title: { contains: queryString } }
-                            }
-                        }
-                    },
-                    {
-                        title: { contains: queryString }
-                    }
-                ]
+                ...whereClause,
             },
             include: {
+                author: true,
                 tags: {
                     select: {
                         tag: true
@@ -104,29 +115,6 @@ export class HomeService {
         });
 
         return articles;
-    }
-
-    async getArticlesByCategoryId(id: string) {
-        const articles = await this.prisma.article.findMany({
-            where: {
-                categories: {
-                    some: {
-                        categoryId: Number(id)
-                    }
-                }
-            },
-            include: {
-                categories: {
-                    select: {
-                        category: true
-                    }
-                }
-            }
-        });
-    
-        return {
-            articles
-        };
     }
 
     async getTag(slug) {
