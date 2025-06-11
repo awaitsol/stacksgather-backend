@@ -115,4 +115,13 @@ export class UsersServices {
             }
         }
     }
+
+    async generateMagicLink(body) {
+        const { email } = body
+        let token = await this.auth_service.auth_sign({ email })
+        return {
+            status: 200,
+            token: token
+        }
+    }
 }

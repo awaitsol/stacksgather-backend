@@ -30,4 +30,9 @@ export class UsersController {
     async changePassword(@Req() req) {
         return await this.userServices.changePassword(req.body)
     }
+
+    @Post('/generate-magic-link')
+    async generteMagicLink(@Req() req) {
+        return await this.userServices.generateMagicLink(req.body)
+    }
 }
