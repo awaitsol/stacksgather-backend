@@ -14,22 +14,45 @@ interface ReturnInterface extends IReturn {
 export class ArticlesService {
     constructor( private prisma: PrismaService ) {}
 
-    async findAll(search?: string): Promise<any[]> {
+    async findAll(query: any = {}): Promise<any[]> {
 
-        const queryString = search?.length > 0 ? {
+        const { categoryId, queryString, take, skip } = query
+
+        let whereClause: any = {
             OR: [
                 {
-                    title: { contains: search }
+                    categories: {
+                        some: categoryId ? {
+                            category: { title: { contains: queryString} },
+                            categoryId: Number(categoryId)
+                        } : {
+                            category: { title: { contains: queryString} },
+                        }
+                    }
                 },
                 {
-                    slug: { contains: search }
+                    tags: { 
+                        some: { 
+                            tag: { title: { contains: queryString } }
+                        }
+                    }
+                },
+                {
+                    title: { contains: queryString }
+                },
+                {
+                    slug: { contains: queryString }
                 }
             ]
-        } : {};
+        }
 
         return await this.prisma.article.findMany({
-            where: { ...queryString },
+            orderBy: { id: "desc" },
+            skip: Number(skip ?? 0),
+            take: Number(take ?? 9),
+            where: { ...whereClause },
             include: {
+                author: true,
                 tags: {
                     select: {
                         tag: true
@@ -40,8 +63,7 @@ export class ArticlesService {
                         category: true
                     }
                 }
-            },
-            orderBy: { id: "desc" }
+            }
         });
     }
 

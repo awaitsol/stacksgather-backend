@@ -64,7 +64,6 @@ export class HomeService {
 
     async searchArticles(query: any = {}) {
         const { categoryId, queryString, take, skip } = query
-        console.log('query', query);
 
         let whereClause: any = {
             OR: [

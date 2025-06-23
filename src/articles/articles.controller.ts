@@ -15,7 +15,7 @@ export class ArticlesController {
   @Get()
   async findAll(@Req() req): Promise<Article[]> {
     const { query } = req;
-    return this.articleService.findAll(query?.search);
+    return this.articleService.findAll(query);
   }
 
   @Get(':slug')
