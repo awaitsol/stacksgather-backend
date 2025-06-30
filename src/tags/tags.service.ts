@@ -38,7 +38,7 @@ export class TagsService {
     }
 
     async save(tag: any): Promise<ReturnInterface> {
-        const slug = tag.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
+        const slug = tag.title.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '').toLowerCase();
 
         let new_tag = await this.prisma.tag.create({
             data: {

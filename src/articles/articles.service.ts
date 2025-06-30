@@ -157,6 +157,8 @@ export class ArticlesService {
 
     slugify = (title) => {
         return title
+            .replace(/[^a-zA-Z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
             .toLowerCase()
             .trim()
             .replace(/&/g, 'and')               // Replace & with 'and'
