@@ -53,4 +53,8 @@ export class CategoriesController {
     return this.categoriesService.userCategories(user_id)
   }
 
+  @Post('articles-categories')
+  async getArticlesCategories(@Req() req, res) {
+    return this.categoriesService.getArticlesCategories();
+  }
 }

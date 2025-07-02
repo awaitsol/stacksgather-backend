@@ -113,4 +113,12 @@ export class CategoriesService {
             }
         })
     }
+
+    async getArticlesCategories() {
+        return await this.prisma.articleCategories.findMany({
+            include: {
+                category: true
+            }
+        })
+    }
 }

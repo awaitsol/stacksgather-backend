@@ -46,11 +46,8 @@ export class ArticlesService {
             ]
         }
 
-        return await this.prisma.article.findMany({
+        let articleQueryObj: any = {
             orderBy: { id: "desc" },
-            skip: Number(skip ?? 0),
-            take: Number(take ?? 9),
-            where: { ...whereClause },
             include: {
                 author: true,
                 tags: {
@@ -64,7 +61,21 @@ export class ArticlesService {
                     }
                 }
             }
-        });
+        }
+
+        if(categoryId || queryString) {
+            articleQueryObj.where = { ...whereClause };
+        }
+
+        if(skip) {
+            articleQueryObj.skip = Number(skip)
+        }
+
+        if(take) {
+            articleQueryObj.take = Number(take)
+        }
+
+        return await this.prisma.article.findMany(articleQueryObj);
     }
 
     async findAllWithTags(): Promise<any[]> {
