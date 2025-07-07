@@ -53,6 +53,11 @@ export class CategoriesService {
                 parent_id: id ? Number(id) : 0,
                 ...queryString
             },
+            include: {
+              _count: {
+                select: { articles: true }
+              }
+            },
             orderBy: {
                 id: "desc"
             }
