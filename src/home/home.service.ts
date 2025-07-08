@@ -38,8 +38,16 @@ export class HomeService {
             }
         })
 
+        const featureCatSlug = await this.prisma.setting.findFirst({ where: { key: 'featured_list' } })
+
         const featuredArticles = await this.prisma.article.findMany({
-            where: { isFeatured: 1 },
+            where: {
+                categories: {
+                    some: {
+                        category: { slug: featureCatSlug.value }
+                    }
+                }
+            },
             orderBy: { id: "desc" },
             include: {
                 author: true,

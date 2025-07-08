@@ -23,4 +23,10 @@ export class SettingsController {
         const { token, new_password } = req.body
         return this.settingService.setNewPassword(token, new_password);
     }
+
+    @Post('home-page')
+    saveHomePageSetting(@Req() req) {
+        const data = req.body
+        return this.settingService.saveHomePageSetting(data);
+    }
 }

@@ -77,4 +77,31 @@ export class SettingsService {
             user: user
         }
     }
+
+    async saveHomePageSetting(data) {
+        let keyRecord = await this.prisma.setting.findFirst({
+            where: {
+                key: data.key
+            }
+        })
+
+        if(!keyRecord) {
+            keyRecord = await this.prisma.setting.create({
+                data: {
+                    key: data.key,
+                    value: data.value
+                }
+            })
+        } else {
+            keyRecord = await this.prisma.setting.update({
+                where: { id: keyRecord.id },
+                data: { value: data.value }
+            })
+        }
+
+        return {
+            status: HttpStatus.OK,
+            setting: keyRecord
+        }
+    }
 }

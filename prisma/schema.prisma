@@ -173,3 +173,11 @@ model CommentResponse {
 
   @@map("comment_responses")
 }
+
+model Setting {
+  id    Int @id @default(autoincrement())
+  key   String
+  value String
+
+  @@map("settings")
+}
