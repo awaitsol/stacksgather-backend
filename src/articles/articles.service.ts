@@ -14,18 +14,15 @@ interface ReturnInterface extends IReturn {
 export class ArticlesService {
     constructor( private prisma: PrismaService ) {}
 
-    async findAll(query: any = {}): Promise<any[]> {
+    async findAll(query: any = {}): Promise<{ total: number, articles: any[] }> {
 
-        const { categoryId, queryString, take, skip } = query
+        const { authorId, categoryId, queryString, take, skip } = query
 
         let whereClause: any = {
             OR: [
                 {
                     categories: {
-                        some: categoryId ? {
-                            category: { title: { contains: queryString} },
-                            categoryId: Number(categoryId)
-                        } : {
+                        some: {
                             category: { title: { contains: queryString} },
                         }
                     }
@@ -44,6 +41,16 @@ export class ArticlesService {
                     slug: { contains: queryString }
                 }
             ]
+        }
+
+        if(authorId) {
+            whereClause.authorId = Number(authorId)
+        }
+
+        if(categoryId && Number(categoryId) > 0) {
+            whereClause.categories = {
+                some: { categoryId: Number(categoryId) }
+            }
         }
 
         let articleQueryObj: any = {
@@ -67,6 +74,8 @@ export class ArticlesService {
             articleQueryObj.where = { ...whereClause };
         }
 
+        const total = await this.prisma.article.count({ where: whereClause })
+
         if(skip) {
             articleQueryObj.skip = Number(skip)
         }
@@ -75,7 +84,12 @@ export class ArticlesService {
             articleQueryObj.take = Number(take)
         }
 
-        return await this.prisma.article.findMany(articleQueryObj);
+        const articles = await this.prisma.article.findMany(articleQueryObj)
+
+        return {
+            total: total,
+            articles: articles
+        }
     }
 
     async findAllWithTags(): Promise<any[]> {
@@ -337,8 +351,16 @@ export class ArticlesService {
             }
         })
 
+        const total = await this.prisma.article.count({
+            where: { 
+                authorId: Number(id),
+                ...whereConditions
+            }
+        })
+
         return {
             status: 200,
+            total,
             articles
         }
     }

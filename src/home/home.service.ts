@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { PrismaService } from 'prisma/primsa.service';
@@ -22,7 +22,7 @@ export class HomeService {
 
         const articles = await this.prisma.article.findMany({
             orderBy: { id: "desc" },
-            take: 9,
+            take: 12,
             include: {
                 author: true,
                 categories: {
@@ -190,5 +190,23 @@ export class HomeService {
         return {
             categories
         };
+    }
+
+    async SubmitWriteForUsQuote(data) {
+        try{
+            const record = await this.prisma.writeForUsQuote.create({
+                data: {...data, topicId: Number(data.topicId)}
+            })
+    
+            return {
+                status: HttpStatus.OK,
+                record
+            }
+        } catch(e) {
+            return {
+                status: HttpStatus.BAD_REQUEST,
+                message: e.message
+            }
+        }
     }
 }

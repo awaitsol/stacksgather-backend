@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Req } from "@nestjs/common";
+import { Controller, Get, Param, Post, Req } from "@nestjs/common";
 import { HomeService } from "./home.service";
 
 @Controller('home')
@@ -23,6 +23,12 @@ export class HomeController {
     @Get('store')
     async store() {
         return await this.homeServices.store()
+    }
+
+    @Post('write-for-us-quote')
+    async SubmitWriteForUsQuote(@Req() req) {
+        const { body } = req
+        return await this.homeServices.SubmitWriteForUsQuote(body)
     }
 
 }

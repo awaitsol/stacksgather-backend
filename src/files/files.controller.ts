@@ -89,4 +89,20 @@ export class FilesController {
     async uploadArticleFile(@UploadedFile() file) {
         return this.fileService.uploadFile(file)
     }
+
+    // Upload write for us file
+    @Post('/upload-write-for-us-file')
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+          destination: 'assets/uploads/write_for_us_files',
+          filename: (req, file, cb) => {
+            const fileNameArr = file.originalname.split('.')
+            const fileName = `file-${req.query?.id ? req.query?.id+'-' : ''}${new Date().getTime()}.${fileNameArr[fileNameArr.length - 1]}`
+            cb(null, fileName);
+          },
+        }),
+    }))
+    async uploadWriteForUsFile(@UploadedFile() file) {
+        return this.fileService.uploadFile(file)
+    }
 }

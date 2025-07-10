@@ -13,7 +13,7 @@ export class ArticlesController {
   constructor(private readonly articleService: ArticlesService) {}
 
   @Get()
-  async findAll(@Req() req): Promise<Article[]> {
+  async findAll(@Req() req): Promise<{ total: number, articles: Article[] }> {
     const { query } = req;
     return this.articleService.findAll(query);
   }

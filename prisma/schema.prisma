@@ -73,6 +73,8 @@ model Category {
   createdAt DateTime            @default(now())
   updatedAt DateTime            @updatedAt
 
+  write_for_us_quotes WriteForUsQuote[]
+
   @@map("categories")
 }
 
@@ -180,4 +182,19 @@ model Setting {
   value String
 
   @@map("settings")
+}
+
+model WriteForUsQuote {
+  id      Int @id @default(autoincrement())
+  name    String
+  email   String
+  subject String
+  phone   String?
+  topicId Int?
+  message String?
+  file    String?
+
+  topic Category? @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@map("write_for_us_quote")
 }
