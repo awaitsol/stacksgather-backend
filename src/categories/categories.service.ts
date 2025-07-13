@@ -24,14 +24,7 @@ export class CategoriesService {
 
     async find(filter): Promise<Category> {
         return await this.prisma.category.findFirst({
-            where: filter,
-            include: {
-                articles: {
-                    select: {
-                        article: true
-                    }
-                }
-            }
+            where: filter
         })
     }
 
