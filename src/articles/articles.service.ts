@@ -70,7 +70,7 @@ export class ArticlesService {
             }
         }
 
-        if(categoryId || queryString) {
+        if((categoryId && Number(categoryId) > 0) || queryString || authorId) {
             articleQueryObj.where = { ...whereClause };
         }
 

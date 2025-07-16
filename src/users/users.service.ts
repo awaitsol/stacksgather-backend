@@ -62,11 +62,12 @@ export class UsersServices {
     }
 
     async update(user: any, id: number) {
+        let slug = this.slugify(`${user.id} ${user.first_name} ${user.last_name}`)
         await this.prisma.user.update({
             where: {
                 id: id
             }, 
-            data: user
+            data: {...user, slug}
         })
         return {
             status: 200,
@@ -122,6 +123,53 @@ export class UsersServices {
         return {
             status: 200,
             token: token
+        }
+    }
+
+    async findBySlug(slug) {
+        const user = await this.prisma.user.findFirst({
+            where: {
+                slug: slug
+            }
+        })
+
+        if(!user) {
+            return {
+                status: HttpStatus.BAD_REQUEST,
+                message: ' Request not valid!'
+            }
+        }
+
+        return {
+            status: 200,
+            user
+        }
+    }
+
+    slugify = (title) => {
+        return title
+            .replace(/[^a-zA-Z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .toLowerCase()
+            .trim()
+            .replace(/&/g, 'and')               // Replace & with 'and'
+            .replace(/[^a-z0-9\s-]/g, '')       // Remove special characters
+            .replace(/\s+/g, '-')               // Replace spaces with hyphens
+            .replace(/-+/g, '-');               // Replace multiple hyphens with one
+    };
+
+    async generateUserSlugs() {
+        const users = await this.prisma.user.findMany();
+
+        for(let i = 0; i < users.length; i++) {
+            let user = users[i]
+            const slug = this.slugify(`${user.id} ${user.first_name} ${user.last_name}`)
+            await this.prisma.user.update({
+                where: {
+                    id: user.id
+                },
+                data: { slug: slug }
+            })
         }
     }
 }

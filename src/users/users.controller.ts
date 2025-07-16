@@ -35,4 +35,15 @@ export class UsersController {
     async generteMagicLink(@Req() req) {
         return await this.userServices.generateMagicLink(req.body)
     }
+
+    @Post('find-by-slug')
+    async findBySlug(@Req() req) {
+        const { slug } = req.body
+        return await this.userServices.findBySlug(slug)
+    }
+
+    @Post('generate-slugs')
+    async generateUserSlugs(@Req() req) {
+        return await this.userServices.generateUserSlugs();
+    }
 }
