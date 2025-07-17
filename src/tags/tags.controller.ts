@@ -45,6 +45,11 @@ export class TagsController {
   @Post('/get-multiple-tags-by-id')
   async getMultipleTagsById(@Req() req, res) {
     let { body } = req
-    return this.tagsService.getMultipleTagsById(body._ids)
+    return await this.tagsService.getMultipleTagsById(body._ids)
+  }
+
+  @Post('/get-mostly-used-tags')
+  async getMostlyUsedTags(@Req() req, res) {
+    return await this.tagsService.getMostlyUsedTags()
   }
 }

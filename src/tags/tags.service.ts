@@ -93,4 +93,30 @@ export class TagsService {
             tags: tags
         }
     }
+
+    async getMostlyUsedTags() {
+        const tags = await this.prisma.tag.findMany({
+            select: {
+                id: true,
+                title: true,
+                slug: true,
+                _count: {
+                    select: {
+                        articles: true
+                    }
+                }
+            },
+            orderBy: {
+                articles: {
+                    _count: "desc"
+                }
+            },
+            take: 20
+        })
+
+        return {
+            status: 200,
+            tags: tags
+        }
+    }
 }
