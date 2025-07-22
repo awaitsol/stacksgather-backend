@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Page } from './page.schema';
-import { Model } from 'mongoose';
 import { IReturn } from 'shared/types';
+import { PrismaService } from 'prisma/primsa.service';
+import { Page } from '@prisma/client';
 
 interface ReturnInterface extends IReturn {
     article: Page,
@@ -11,20 +10,28 @@ interface ReturnInterface extends IReturn {
 
 @Injectable()
 export class PageService {
-    constructor(@InjectModel(Page.name) private pageModel: Model<Page>){}
+    constructor(
+        private prisma: PrismaService
+    ){}
 
     async findAll(): Promise<Page[]> {
-        return await this.pageModel.find().exec()
+        return await this.prisma.page.findMany()
     }
 
     async findOne(slug: string): Promise<Page> {
-        return await this.pageModel.findOne({slug: slug}).exec()
+        return await this.prisma.page.findFirst({
+            where: {
+                slug: slug
+            }
+        })
     }
 
     async save(page: Page): Promise<ReturnInterface> {
         const slug = page.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
-        const new_page = new this.pageModel({...page, slug: slug})
-        new_page.save()
+        const new_page = await this.prisma.page.create({
+            data: {...page, slug: slug}
+        })
+        
         return {
             status: 200,
             message: 'Page saved successfully.',
@@ -34,7 +41,12 @@ export class PageService {
 
     async update(page: Page, id: string): Promise<IReturn> {
         const slug = page.title.replace(/[^a-zA-Z]+/g, '-').toLowerCase();
-        await this.pageModel.updateOne({_id: id}, {...page, slug: slug}).exec()
+        await this.prisma.page.update({
+            where: {
+                id: Number(id)
+            },
+            data: {...page, slug: slug}
+        })
         return {
             status: 200,
             message: 'Page updated successfully.',
@@ -42,7 +54,11 @@ export class PageService {
     }
 
     async delete(id: string) {
-        await this.pageModel.findOneAndDelete({_id: id})
+        await this.prisma.page.delete({
+            where: {
+                id: Number(id)
+            }
+        })
         return {
             status: 200,
             message: 'Page deleted successfully'

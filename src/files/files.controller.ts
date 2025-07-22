@@ -2,7 +2,6 @@ import { Body, Controller, Get, Param, Post, Req, Res, UploadedFile, UseIntercep
 import { FilesService } from "./files.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from 'multer';
-import { UsersServices } from "src/users/users.service";
 
 @Controller("files")
 export class FilesController {

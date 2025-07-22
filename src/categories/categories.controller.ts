@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Post, Put, Req } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { Category } from './category.schema';
 import { IReturn } from 'shared/types';
+import { Category } from '@prisma/client';
 
 interface ReturnInterface extends IReturn {
   category: Category,

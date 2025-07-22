@@ -1,14 +1,8 @@
-import { InjectModel } from "@nestjs/mongoose";
-import { Files } from "./file.schema";
-import { Model } from "mongoose";
-import { User } from "src/users/users.schema";
-import { UsersServices } from "src/users/users.service";
 import { PrismaService } from "prisma/primsa.service";
 
 export class FilesService {
 
     constructor(
-        @InjectModel(Files.name) private fileModel:Model<Files>,
         private prisma: PrismaService
     ) {}
 

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Category } from './category.schema';
 import { IReturn } from 'shared/types';
 import { PrismaService } from 'prisma/primsa.service';
+import { Category } from '@prisma/client';
 
 interface ReturnInterface extends IReturn {
-    category: any,
+    category: Category,
     token?: string
 }
 

@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Article } from './article.schema';
-import { Model, Types } from 'mongoose';
 import { IError, IReturn } from 'shared/types';
 import { PrismaService } from 'prisma/primsa.service';
 

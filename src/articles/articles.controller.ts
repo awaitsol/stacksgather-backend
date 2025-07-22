@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Param, Post, Put, Req } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
-import { Article } from './article.schema';
 import { IError, IReturn } from 'shared/types';
+import { Article } from '@prisma/client';
 
 interface ReturnInterface extends IReturn {
   article: Article,

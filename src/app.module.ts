@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoginModule } from './login/login.module';
@@ -21,9 +20,6 @@ import { ArticleCommentsModule } from './article-comments/article-comments.modul
     ConfigModule.forRoot({
       envFilePath: ".env",
       isGlobal: true
-    }),
-    MongooseModule.forRoot(process.env.DB_URL, {
-      dbName: 'blogs'
     }),
     UsersModule,
     LoginModule,

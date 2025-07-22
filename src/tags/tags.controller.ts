@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Post, Put, Req } from '@nestjs/common';
 import { TagsService } from './tags.service';
-import { Tag } from './tag.schema';
 import { IReturn } from 'shared/types';
+import { Tag } from '@prisma/client';
 
 interface ReturnInterface extends IReturn {
   tag: Tag,

@@ -1,20 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
 import { PrismaService } from 'prisma/primsa.service';
-import { Article } from 'src/articles/article.schema';
-import { Category } from 'src/categories/category.schema';
-import { Tag } from 'src/tags/tag.schema';
-import { User } from 'src/users/users.schema';
 
 @Injectable()
 export class HomeService {
 
     constructor(
-        @InjectModel(Article.name) private articleModel: Model<Article>, 
-        @InjectModel(Tag.name) private tagModel: Model<Tag>,
-        @InjectModel(Category.name) private categoryModel: Model<Category>,
-        @InjectModel(User.name) private userModel: Model<User>,
         private prisma: PrismaService
     ){}
 
@@ -153,22 +143,14 @@ export class HomeService {
     }
 
     async store() {
-        const categories = await this.categoryModel.aggregate([{
-            $project: {
-                title: 1,
-                parent_id: 1,
-                thumbnail: 1,
-                slug: 1,
-                createdAt: 1,
-                updatedAt: 1
-            }
-        }])
+        const categories = await this.prisma.category.findMany()
 
         for(let i = 0; i < categories.length; i++)
         {
             let category = categories[i]
             
-            const parentCat = (category.parent_id && category.parent_id !== '0') ? await this.categoryModel.findOne({_id: new Types.ObjectId(category.parent_id)}) : null
+            const parentCat = (category.parent_id && category.parent_id !== 0) ? await this.prisma.category.findFirst({ where: {id: category.parent_id} }) : null
+
             const parentBySlug = parentCat ? await this.prisma.category.findFirst({where: {slug: parentCat.slug}}) : null
 
             const existCat = await this.prisma.category.findFirst({where: {slug: category.slug}})

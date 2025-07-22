@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Param, Post, Put, Req } from '@nestjs/common';
 import { PageService } from './page.service';
-import { Page } from './page.schema';
 import { IReturn } from 'shared/types';
+import { Page } from '@prisma/client';
 
 interface ReturnInterface extends IReturn {
   article: Page,

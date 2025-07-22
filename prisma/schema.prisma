@@ -199,3 +199,15 @@ model WriteForUsQuote {
 
   @@map("write_for_us_quote")
 }
+
+model Page {
+  id                Int @id @default(autoincrement())
+  title             String
+  banner_image      String
+  short_description String
+  description       String? @db.Text
+  slug              String?
+  meta_description  String?
+
+  @@map("pages")
+}

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Put, Req } from "@nestjs/common";
 import { UsersServices } from "./users.service";
-import { User } from "./users.schema";
 import { IError, IReturn } from "shared/types";
+import { User } from "@prisma/client";
 
 interface ReturnInterface extends IReturn {
     user: User

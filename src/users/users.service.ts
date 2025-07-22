@@ -3,9 +3,10 @@ import * as bcrypt from "bcrypt"
 import { IError, IReturn } from "shared/types"
 import { AuthService } from "shared/services/auth-service"
 import { PrismaService } from "prisma/primsa.service"
+import { User } from "@prisma/client"
 
 interface ReturnInterface extends IReturn {
-    user: any,
+    user: User,
     token?: string
 }
 
@@ -16,7 +17,7 @@ export class UsersServices {
         private prisma: PrismaService
     ) {}
 
-    async all(): Promise<any[]> {
+    async all(): Promise<User[]> {
         let users = await this.prisma.user.findMany()
         return users
     }
