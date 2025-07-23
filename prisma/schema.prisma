@@ -65,14 +65,15 @@ model Tag {
 }
 
 model Category {
-  id        Int                 @id @default(autoincrement())
-  title     String              @db.VarChar(255)
-  thumbnail String?             @db.LongText
-  parent_id Int?
-  slug      String              @db.VarChar(255)
-  articles  ArticleCategories[]
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
+  id          Int                 @id @default(autoincrement())
+  title       String              @db.VarChar(255)
+  description String?           @db.Text
+  thumbnail   String?             @db.LongText
+  parent_id   Int?
+  slug        String              @db.VarChar(255)
+  articles    ArticleCategories[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
 
   write_for_us_quotes WriteForUsQuote[]
 
