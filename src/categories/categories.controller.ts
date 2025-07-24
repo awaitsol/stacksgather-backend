@@ -55,6 +55,10 @@ export class CategoriesController {
 
   @Post('articles-categories')
   async getArticlesCategories(@Req() req, res) {
-    return this.categoriesService.getArticlesCategories();
+    const { orderBy, whereClause } = req.body
+    return this.categoriesService.getArticlesCategories({
+      orderBy,
+      whereClause
+    });
   }
 }

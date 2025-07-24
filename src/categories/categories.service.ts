@@ -8,6 +8,11 @@ interface ReturnInterface extends IReturn {
     token?: string
 }
 
+type getArticlesCategoriesProps = {
+    orderBy?: {[string: string]: string}
+    whereClause?: {[string: string]: string | number}
+}
+
 @Injectable()
 export class CategoriesService {
     constructor(
@@ -118,12 +123,20 @@ export class CategoriesService {
         })
     }
 
-    async getArticlesCategories() {
+    async getArticlesCategories({ orderBy, whereClause }: getArticlesCategoriesProps) {
         return await this.prisma.category.findMany({
-            where: {
+            where: whereClause ? {
+                ...whereClause,
                 articles: {
                     some: {}
                 }
+            } : {
+                articles: {
+                    some: {}
+                }
+            },
+            orderBy: orderBy ? orderBy : {
+                title: "asc"
             }
         })
     }
