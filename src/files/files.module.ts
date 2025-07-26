@@ -7,10 +7,10 @@ import { PrismaService } from 'prisma/primsa.service';
 @Module({
   imports: [
     MulterModule.registerAsync({
-        useFactory: () => ({
-          dest: './assets/uploads'
-        }),
+      useFactory: () => ({
+        dest: './assets/uploads'
       }),
+    }),
   ],
   controllers: [FilesController],
   providers: [FilesService, PrismaService],

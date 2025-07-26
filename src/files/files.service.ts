@@ -15,16 +15,12 @@ export class FilesService {
             size: file.size,
             destination: file.destination
         }
-        
-        const new_file = await this.prisma.file.create({
+
+        const prisma = new PrismaService()
+        const new_file = await prisma.file.create({
             data: new_file_data
         })
 
-        return await new_file
-    }
-
-    async updateUserProfile(user_id, file_id) {
-        // const user = await this.userModel.updateOne({_id: user_id}, {profile: file_id}).exec()
-        // return user
+        return new_file
     }
 }
