@@ -20,4 +20,10 @@ export class MailController {
         const { token, userId, new_email } = body
         return this.mailService.changeMailAddress(token, userId, new_email)
     }
+
+    @Post('contact-form')
+    contactForm (@Body() body) {
+        const { name, email, phone, subject, message } = body
+        return this.mailService.contactForm(name, email, phone, subject, message)
+    }
 }

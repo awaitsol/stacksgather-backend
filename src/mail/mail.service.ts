@@ -6,7 +6,7 @@ import { join } from 'path';
 import * as fs from "fs-extra"
 import { AuthService } from 'shared/services/auth-service';
 import { PrismaService } from 'prisma/primsa.service';
-import crypto from "crypto"
+import { User } from '@prisma/client';
 
 @Injectable()
 export class MailService {
@@ -143,6 +143,41 @@ export class MailService {
             }
         })
         
+        return {
+            status: HttpStatus.OK,
+            message: "Email successfully sent."
+        };
+    }
+
+    async contactForm(name, email, phone, subject, message) {
+
+        const prisma = new PrismaService()
+
+        const user =  await prisma.user.findFirst({
+            where: { role: "ADMIN" }
+        })
+
+        if(!user) {
+            return {
+                status: HttpStatus.NOT_FOUND,
+                message: "Internal Server Error!"
+            }
+        }
+
+        const toEmail = user ? user.email : null
+
+        await this.transporter.sendMail({
+            from: `"Stacks Gather" ${process.env.MAIL_USERNAME}`,
+            to: toEmail,
+            subject: `Contact By - ${name}`,
+            html: `
+                Name: ${name}
+                Email: ${email}
+                Phone: ${phone}
+                Subject: ${subject}
+                Message: ${message}
+            `,
+        });
         return {
             status: HttpStatus.OK,
             message: "Email successfully sent."
