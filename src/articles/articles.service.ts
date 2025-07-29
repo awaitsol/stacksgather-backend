@@ -111,6 +111,11 @@ export class ArticlesService {
                         category: true
                     }
                 },
+                article_hashtags: {
+                    select: {
+                        hashtag: true
+                    }
+                },
                 tags: {
                     select: {
                         tag: true
@@ -193,8 +198,10 @@ export class ArticlesService {
         const slug = this.slugify(article.title);
         const categoryIds = article.categories ?? []
         const tagIds = article.tags ?? []
+        const hashtagIds = article.hashtags ?? []
         delete article.categories
         delete article.tags
+        delete article.hashtags
 
         let new_article = await this.prisma.article.create({
             data: {...article, slug: slug}
@@ -205,6 +212,10 @@ export class ArticlesService {
             data: { slug: `${new_article.id}-${slug}` }
         })
         
+        await this.prisma.articleHashTag.createMany({
+            data: hashtagIds.map(hashtagId => ({ articleId: new_article.id, hashtagId: hashtagId }))
+        })
+
         await this.prisma.articleTags.createMany({
             data: tagIds.map(tagId => ({ articleId: new_article.id, tagId: tagId }))
         })
@@ -224,25 +235,30 @@ export class ArticlesService {
         try {
             const categoryIds = article.categories ?? []
             const tagIds = article.tags ?? []
+            const hashtagIds = article.hashtags ?? []
             delete article.categories
             delete article.tags
+            delete article.hashtags
             await this.prisma.article.update({
                 where: {id: id}, data: {...article}
             })
 
+            await this.prisma.articleHashTag.deleteMany({
+                where: { articleId: id }
+            })
+            await this.prisma.articleHashTag.createMany({
+                data: hashtagIds.map(hashtagId => ({ articleId: id, hashtagId: hashtagId }))
+            })
+
             await this.prisma.articleTags.deleteMany({
-                where: {
-                    articleId: id
-                }
+                where: { articleId: id }
             })
             await this.prisma.articleTags.createMany({
                 data: tagIds.map(tagId => ({ articleId: id, tagId: tagId }))
             })
 
             await this.prisma.articleCategories.deleteMany({
-                where: {
-                    articleId: id
-                }
+                where: { articleId: id }
             })
             await this.prisma.articleCategories.createMany({
                 data: categoryIds.map(catId => ({ articleId: id, categoryId: catId }))

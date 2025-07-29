@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { IReturn } from 'shared/types';
 import { PrismaService } from 'prisma/primsa.service';
+import { Tag } from '@prisma/client';
 
 interface ReturnInterface extends IReturn {
     tag: any,
@@ -117,6 +118,47 @@ export class TagsService {
         return {
             status: 200,
             tags: tags
+        }
+    }
+
+    async moveToHashTag(data: Tag) {
+        const articleTags = await this.prisma.articleTags.findMany({
+            where: {
+                tagId: data.id
+            }
+        })
+
+        for(let i = 0; i < articleTags.length; i++) {
+            const hashtag = await this.prisma.hashTag.create({
+                data: {
+                    title: data.title,
+                    slug: data.slug
+                }
+            })
+
+            await this.prisma.articleHashTag.create({
+                data: {
+                    articleId: articleTags[i].articleId,
+                    hashtagId: hashtag.id
+                }
+            })
+        }
+
+        await this.prisma.articleTags.deleteMany({
+            where: {
+                tagId: data.id
+            }
+        })
+
+        await this.prisma.tag.delete({
+            where: {
+                id: data.id
+            }
+        })
+
+        return {
+            status: HttpStatus.OK,
+            message: "Tag changed to hashtag."
         }
     }
 }

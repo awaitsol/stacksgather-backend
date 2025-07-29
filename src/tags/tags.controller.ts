@@ -52,4 +52,9 @@ export class TagsController {
   async getMostlyUsedTags(@Req() req, res) {
     return await this.tagsService.getMostlyUsedTags()
   }
+
+  @Post('moveto-hashtag')
+  async moveToHashTag(@Req() req, res) {
+    return await this.tagsService.moveToHashTag(req.body)
+  }
 }

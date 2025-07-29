@@ -64,6 +64,18 @@ model Tag {
   @@map("tags")
 }
 
+model HashTag {
+  id        Int           @id @default(autoincrement())
+  title     String        @db.VarChar(255)
+  slug      String        @db.VarChar(255)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  article_hashtags        ArticleHashTag[]
+  
+  @@map("hashtags")
+}
+
 model Category {
   id          Int                 @id @default(autoincrement())
   title       String              @db.VarChar(255)
@@ -103,6 +115,7 @@ model Article {
   authorId          Int                 @default(1)
   author            User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
+  article_hashtags  ArticleHashTag[]
   article_comments  ArticleComment[]
   @@map("articles")
 }
@@ -127,6 +140,17 @@ model ArticleTags {
 
   @@id([articleId, tagId])
   @@map("article_tags")
+}
+
+model ArticleHashTag {
+  articleId   Int
+  hashtagId   Int
+
+  article     Article @relation(fields: [articleId], references: [id])
+  hashtag     HashTag     @relation(fields: [hashtagId], references: [id])
+
+  @@id([articleId, hashtagId])
+  @@map("article_hashtags")
 }
 
 model File {

@@ -14,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { SettingsModule } from './settings/settings.module';
 import { ArticleCommentsModule } from './article-comments/article-comments.module';
+import { HashtagModule } from './hashtag/hashtag.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { ArticleCommentsModule } from './article-comments/article-comments.modul
     AuthModule,
     MailModule,
     SettingsModule,
-    ArticleCommentsModule
+    ArticleCommentsModule,
+    HashtagModule
   ],
   controllers: [AppController],
   providers: [AppService],
