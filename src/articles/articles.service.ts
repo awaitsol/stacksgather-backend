@@ -281,7 +281,8 @@ export class ArticlesService {
     async delete(id: number) {
         await this.prisma.articleCategories.deleteMany({where: {articleId: id}});
         await this.prisma.articleTags.deleteMany({where: {articleId: id}});
-        await this.prisma.article.delete({where: {id: Number(id)}});
+        await this.prisma.articleHashTag.deleteMany({where: {articleId: id}});
+        await this.prisma.article.delete({where: {id: id}});
         return {
             status: 200,
             message: 'article deleted successfully'
