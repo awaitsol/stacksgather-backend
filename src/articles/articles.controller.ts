@@ -62,4 +62,10 @@ export class ArticlesController {
     let { body } = req
     return this.articleService.getMultipleArticleByFieldIds(body._ids)
   }
+
+  @Post('/update-status')
+  async updateStatus(@Req() req) {
+    const { body } = req
+    return this.articleService.updateStatus(body)
+  }
 }

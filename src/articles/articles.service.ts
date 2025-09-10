@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IError, IReturn } from 'shared/types';
 import { PrismaService } from 'prisma/primsa.service';
+import { Article } from '@prisma/client';
 
 interface ReturnInterface extends IReturn {
     article: any,
@@ -376,6 +377,18 @@ export class ArticlesService {
             status: 200,
             total,
             articles
+        }
+    }
+
+    async updateStatus(body: {id: number, status: Article['status']}) {
+        const { id, status } = body
+        await this.prisma.article.update({
+            where: { id: Number(id) },
+            data: { status: status }
+        })
+        return {
+            status: 200,
+            message: 'Article status updated successfully.'
         }
     }
 }

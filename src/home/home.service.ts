@@ -13,6 +13,7 @@ export class HomeService {
         const articles = await this.prisma.article.findMany({
             orderBy: { id: "desc" },
             take: 12,
+            where: { status: "ACTIVE" },
             include: {
                 author: true,
                 categories: {
@@ -32,6 +33,7 @@ export class HomeService {
 
         const featuredArticles = await this.prisma.article.findMany({
             where: {
+                status: "ACTIVE",
                 categories: {
                     some: {
                         category: { slug: featureCatSlug.value }
@@ -61,10 +63,13 @@ export class HomeService {
     }
 
     async searchArticles(query: any = {}) {
-        const { categoryId, queryString, take, skip } = query
+        const { authorId, categoryId, queryString, take, skip } = query
 
         let whereClause: any = {
-            OR: [
+            status: "ACTIVE"
+        }
+        if(queryString) {
+            whereClause.OR = [
                 {
                     categories: {
                         some: categoryId ? {
@@ -84,18 +89,21 @@ export class HomeService {
                 },
                 {
                     title: { contains: queryString }
+                },
+                {
+                    slug: { contains: queryString }
                 }
             ]
         }
+        if(authorId) {
+            whereClause.authorId = Number(authorId)
+        }
+
         if(categoryId) whereClause.categories = { some: { categoryId: Number(categoryId) } }
 
-        const articles = await this.prisma.article.findMany({
+        let articleQueryObj: any = {
             orderBy: { id: "desc" },
-            skip: Number(skip ?? 0),
-            take: Number(take ?? 9),
-            where: {
-                ...whereClause,
-            },
+            where: whereClause,
             include: {
                 author: true,
                 tags: {
@@ -107,11 +115,26 @@ export class HomeService {
                     select: {
                         category: true
                     }
-                },
+                }
             }
-        });
+        }
 
-        return articles;
+        const total = await this.prisma.article.count({ where: whereClause })
+
+        if(skip) {
+            articleQueryObj.skip = Number(skip)
+        }
+
+        if(take) {
+            articleQueryObj.take = Number(take)
+        }
+
+        const articles = await this.prisma.article.findMany(articleQueryObj);
+
+        return {
+            total: total,
+            articles: articles
+        };
     }
 
     async getTag(slug) {

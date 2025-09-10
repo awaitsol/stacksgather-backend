@@ -82,6 +82,7 @@ model Category {
   description String?           @db.Text
   thumbnail   String?             @db.LongText
   parent_id   Int?
+  status      Status              @default(ACTIVE)
   slug        String              @db.VarChar(255)
   articles    ArticleCategories[]
   createdAt   DateTime            @default(now())
@@ -110,6 +111,7 @@ model Article {
   slug              String              @db.VarChar(255)
   categories        ArticleCategories[]
   tags              ArticleTags[]
+  status            Status              @default(ACTIVE)
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   authorId          Int                 @default(1)
