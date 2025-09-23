@@ -14,7 +14,7 @@ export class ArticlesService {
 
     async findAll(query: any = {}): Promise<{ total: number, articles: any[] }> {
 
-        const { authorId, categoryId, queryString, take, skip } = query
+        const { authorId, categoryId, queryString, status, take, skip } = query
 
         let whereClause: any = {
             OR: [
@@ -49,6 +49,10 @@ export class ArticlesService {
             whereClause.categories = {
                 some: { categoryId: Number(categoryId) }
             }
+        }
+
+        if(status && status !== "all") {
+            whereClause.status = status
         }
 
         let articleQueryObj: any = {
