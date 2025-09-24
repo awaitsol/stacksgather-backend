@@ -1,0 +1,9 @@
+-- AlterTable
+ALTER TABLE `users` ADD COLUMN `address_line_1` VARCHAR(191) NULL,
+    ADD COLUMN `address_line_2` VARCHAR(191) NULL,
+    ADD COLUMN `city` VARCHAR(191) NULL,
+    ADD COLUMN `country` VARCHAR(191) NULL,
+    ADD COLUMN `phone` VARCHAR(191) NULL,
+    ADD COLUMN `state` VARCHAR(191) NULL,
+    ADD COLUMN `website_url` VARCHAR(191) NULL,
+    ADD COLUMN `zipcode` VARCHAR(191) NULL;
