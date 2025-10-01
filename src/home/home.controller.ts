@@ -31,4 +31,14 @@ export class HomeController {
         return await this.homeServices.SubmitWriteForUsQuote(body)
     }
 
+    @Get('featured-categoies-with-articles')
+    async featuredCategoriesWithArticles(@Req() req) {
+        return await this.homeServices.featuredCategoriesWithArticles()
+    }
+
+    @Get('explore')
+    async explore(@Req() req) {
+        const { search } = req.query
+        return await this.homeServices.explore(search)
+    }
 }

@@ -149,7 +149,7 @@ export class MailService {
         };
     }
 
-    async contactForm(name, email, phone, subject, message) {
+    async contactForm(first_name, last_name, email, company, phone, subject, message) {
 
         const prisma = new PrismaService()
 
@@ -169,10 +169,11 @@ export class MailService {
         await this.transporter.sendMail({
             from: `"Stacks Gather" ${process.env.MAIL_USERNAME}`,
             to: toEmail,
-            subject: `Contact By - ${name}`,
+            subject: `Contact By - ${first_name} ${last_name}`,
             html: `
-                Name: ${name}
+                Name: ${first_name} ${last_name}
                 Email: ${email}
+                Company / Organization: ${company}
                 Phone: ${phone}
                 Subject: ${subject}
                 Message: ${message}

@@ -102,7 +102,10 @@ export class HomeService {
         if(categoryId) whereClause.categories = { some: { categoryId: Number(categoryId) } }
 
         let articleQueryObj: any = {
-            orderBy: { id: "desc" },
+            orderBy: [
+                { isFeatured: "desc" },
+                { id: "desc" }
+            ],
             where: whereClause,
             include: {
                 author: true,
@@ -206,6 +209,149 @@ export class HomeService {
             return {
                 status: HttpStatus.OK,
                 record
+            }
+        } catch(e) {
+            return {
+                status: HttpStatus.BAD_REQUEST,
+                message: e.message
+            }
+        }
+    }
+
+    async featuredCategoriesWithArticles() {
+        try{
+            const data = await this.prisma.category.findMany({
+                where: {
+                    featured: true
+                },
+                include: {
+                    articles: {
+                        take: 6,
+                        where: {
+                            article: {
+                                status: "ACTIVE"
+                            }
+                        },
+                        include: {
+                            article: {
+                                include: {
+                                    author: true,
+                                    tags: {
+                                        select: {
+                                            tag: true
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        orderBy: {
+                            article: {
+                                id: "desc"
+                            }
+                        }
+                    }
+                }
+            })
+
+            return {
+                status: HttpStatus.OK,
+                data
+            }
+        } catch(e) {
+            return {
+                status: HttpStatus.BAD_REQUEST,
+                message: e.message
+            }
+        }
+    }
+
+    async explore(search: string) {
+        try {
+            if (!search || search.trim() === '') {
+                return {
+                    status: HttpStatus.BAD_REQUEST,
+                    message: 'Search query is required'
+                }
+            }
+
+            const searchQuery = search.trim()
+
+            // Search categories
+            const categories = await this.prisma.category.findMany({
+                where: {
+                    status: "ACTIVE",
+                    OR: [
+                        { title: { contains: searchQuery } },
+                        { slug: { contains: searchQuery } },
+                        { description: { contains: searchQuery } }
+                    ]
+                },
+                take: 10,
+                orderBy: { id: "desc" }
+            })
+
+            // Search articles
+            const articles = await this.prisma.article.findMany({
+                where: {
+                    status: "ACTIVE",
+                    OR: [
+                        { title: { contains: searchQuery } },
+                        { slug: { contains: searchQuery } },
+                        { short_description: { contains: searchQuery } },
+                        { meta_description: { contains: searchQuery } }
+                    ]
+                },
+                take: 10,
+                orderBy: [
+                    { isFeatured: "desc" },
+                    { id: "desc" }
+                ],
+                include: {
+                    author: true,
+                    categories: {
+                        select: {
+                            category: true
+                        }
+                    },
+                    tags: {
+                        select: {
+                            tag: true
+                        }
+                    }
+                }
+            })
+
+            // Search users
+            const users = await this.prisma.user.findMany({
+                where: {
+                    status: "ACTIVE",
+                    OR: [
+                        { first_name: { contains: searchQuery } },
+                        { last_name: { contains: searchQuery } },
+                        { email: { contains: searchQuery } },
+                        { slug: { contains: searchQuery } }
+                    ]
+                },
+                take: 10,
+                orderBy: { id: "desc" },
+                select: {
+                    id: true,
+                    first_name: true,
+                    last_name: true,
+                    email: true,
+                    profile: true,
+                    slug: true,
+                    role: true
+                }
+            })
+
+            return {
+                status: HttpStatus.OK,
+                data: {
+                    categories,
+                    articles,
+                    users
+                }
             }
         } catch(e) {
             return {

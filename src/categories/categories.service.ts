@@ -29,8 +29,17 @@ export class CategoriesService {
 
     async find(filter): Promise<Category> {
         return await this.prisma.category.findFirst({
-            where: filter
+            where: filter,
+            include: {
+                _count: {
+                    select: { articles: true }
+                }
+            }
         })
+    }
+
+    async getAll(data): Promise<Category[]> {
+        return await this.prisma.category.findMany(data)
     }
 
     async findMain(id: number, search?: string): Promise<Category[]> {
@@ -136,9 +145,46 @@ export class CategoriesService {
                     some: {}
                 }
             },
+            include: {
+                _count: {
+                    select: { articles: true }
+                }
+            },
             orderBy: orderBy ? orderBy : {
                 title: "asc"
             }
+        })
+    }
+
+    async search({search, sortBy}) {
+        let whereClause: any = {
+            status: "ACTIVE"
+        }
+
+        if (search && search.trim() !== '') {
+            whereClause.OR = [
+                { title: { contains: search.trim() } },
+                { slug: { contains: search.trim() } },
+                { description: { contains: search.trim() } }
+            ]
+        }
+
+        let orderByClause: any = { id: "desc" }
+
+        if (sortBy === "most_articles") {
+            orderByClause = [{ articles: { _count: "desc" } }, {id: "desc"}]
+        } else if (sortBy === "most_recent") {
+            orderByClause = { id: "desc" }
+        }
+
+        return await this.prisma.category.findMany({
+            where: whereClause,
+            include: {
+                _count: {
+                    select: { articles: true }
+                }
+            },
+            orderBy: orderByClause
         })
     }
 }

@@ -14,7 +14,7 @@ export class ArticlesService {
 
     async findAll(query: any = {}): Promise<{ total: number, articles: any[] }> {
 
-        const { authorId, categoryId, queryString, status, take, skip } = query
+        const { isFeatured, authorId, categoryId, queryString, status, sortBy, take, skip } = query
 
         let whereClause: any = {
             OR: [
@@ -55,8 +55,21 @@ export class ArticlesService {
             whereClause.status = status
         }
 
+        if(isFeatured) {
+            whereClause.isFeatured = 1
+        }
+
+        let orderByClause: any = [
+            {isFeatured: "desc"},
+            { id: "desc" }
+        ]
+        
+        if (sortBy === "most_recent") {
+            orderByClause = { id: "desc" }
+        }
+
         let articleQueryObj: any = {
-            orderBy: { id: "desc" },
+            orderBy: orderByClause,
             include: {
                 author: true,
                 tags: {
@@ -72,7 +85,7 @@ export class ArticlesService {
             }
         }
 
-        if((categoryId && Number(categoryId) > 0) || queryString || authorId) {
+        if((categoryId && Number(categoryId) > 0) || queryString || authorId || isFeatured || (status && status !== "all")) {
             articleQueryObj.where = { ...whereClause };
         }
 

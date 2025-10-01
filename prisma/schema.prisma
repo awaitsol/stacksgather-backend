@@ -87,11 +87,12 @@ model HashTag {
 model Category {
   id          Int                 @id @default(autoincrement())
   title       String              @db.VarChar(255)
-  description String?           @db.Text
+  description String?             @db.Text
   thumbnail   String?             @db.LongText
   parent_id   Int?
   status      Status              @default(ACTIVE)
   slug        String              @db.VarChar(255)
+  featured    Boolean             @default(false)
   articles    ArticleCategories[]
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
@@ -224,11 +225,15 @@ model WriteForUsQuote {
   id      Int @id @default(autoincrement())
   name    String
   email   String
-  subject String
+  linkedin_source String?
   phone   String?
-  topicId Int?
-  message String?
+  topicId Int
+  article_title String
+  article_outline String
+  article_bio String?
   file    String?
+  agreement Boolean? @default(false)
+  subscribe Boolean? @default(false)
 
   topic Category? @relation(fields: [topicId], references: [id], onDelete: Cascade)
 

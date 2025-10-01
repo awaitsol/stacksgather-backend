@@ -23,7 +23,7 @@ export class MailController {
 
     @Post('contact-form')
     contactForm (@Body() body) {
-        const { name, email, phone, subject, message } = body
-        return this.mailService.contactForm(name, email, phone, subject, message)
+        const { first_name, last_name, email, company, phone, subject, message } = body
+        return this.mailService.contactForm(first_name, last_name, email, company, phone, subject, message)
     }
 }

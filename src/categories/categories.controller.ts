@@ -23,6 +23,12 @@ export class CategoriesController {
     return this.categoriesService.find(body)
   }
 
+  @Post('get-categories')
+  async getCategories(@Req() req, res): Promise<Category[]> {
+    let {body} = req
+    return this.categoriesService.getAll(body)
+  }
+
   @Post('by-parent-id')
   async findMainCategories(@Req() req, res): Promise<Category[]> {
     let { body, query } = req
@@ -60,5 +66,10 @@ export class CategoriesController {
       orderBy,
       whereClause
     });
+  }
+
+  @Get('search')
+  async search(@Req() req, res) {
+    return this.categoriesService.search(req.query)
   }
 }
