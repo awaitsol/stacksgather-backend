@@ -397,11 +397,19 @@ export class ArticlesService {
         }
     }
 
-    async updateStatus(body: {id: number, status: Article['status']}) {
-        const { id, status } = body
+    async updateStatus(body: {id: number, status: Article['status'], isFeatured: number}) {
+        const { id, status, isFeatured } = body
+        let data: Record<string, any> = {}
+        if(status !== undefined) {
+            data.status = status
+        }
+        if(isFeatured !== undefined) {
+            data.isFeatured = isFeatured ? 1 : 0
+        }
+
         await this.prisma.article.update({
             where: { id: Number(id) },
-            data: { status: status }
+            data: data
         })
         return {
             status: 200,
