@@ -97,6 +97,7 @@ export class CategoriesService {
                 description: category.description,
                 parent_id: Number(category.parent_id), 
                 status: category.status,
+                featured: category.featured,
                 slug: slug
             }
         })
