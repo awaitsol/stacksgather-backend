@@ -360,4 +360,24 @@ export class HomeService {
             }
         }
     }
+
+    async subscribeEmail(email: string) {
+        try {
+            const create_subscribe = await this.prisma.subscription.create({
+                data: {
+                    email: email
+                }
+            })
+
+            return {
+                status: HttpStatus.OK,
+                data: create_subscribe
+            }
+        } catch(e) {
+            return {
+                status: HttpStatus.BAD_REQUEST,
+                message: e.message
+            }
+        }
+    }
 }

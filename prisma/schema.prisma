@@ -251,3 +251,10 @@ model Page {
 
   @@map("pages")
 }
+
+model Subscription {
+  id    Int @id @default(autoincrement())
+  email String
+
+  @@map("subscription")
+}

@@ -41,4 +41,10 @@ export class HomeController {
         const { search } = req.query
         return await this.homeServices.explore(search)
     }
+
+    @Post('subscribe-email')
+    async subscribeEmail(@Req() req) {
+        const { email } = req.body
+        return await this.homeServices.subscribeEmail(email)
+    }
 }
